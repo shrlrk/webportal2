@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Web Portal</title>
+    <!-- Google Fonts: Inter for Apple-like typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar left-sidebar">
+            <div class="logo">
+                <span class="material-icons-outlined md-36">school</span>
+                <h2>School Portal</h2>
+            </div>
+            <nav class="side-menu">
+                <a href="#" class="menu-item active">
+                    <span class="material-icons-outlined">looks_one</span>
+                    <span>1학년</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="material-icons-outlined">looks_two</span>
+                    <span>2학년</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="material-icons-outlined">looks_3</span>
+                    <span>3학년</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Navigation -->
+            <header class="top-nav">
+                <nav class="top-menu">
+                    <a href="#" class="top-menu-item active">홈</a>
+                    <a href="#" class="top-menu-item">공지사항</a>
+                    <a href="#" class="top-menu-item">과제</a>
+                    <a href="#" class="top-menu-item">성적</a>
+                    <a href="#" class="top-menu-item">시간표</a>
+                    <a href="#" class="top-menu-item">마이페이지</a>
+                </nav>
+                <div class="auth-buttons">
+                    <button class="btn btn-outline" onclick="openModal('login-modal')">로그인</button>
+                    <button class="btn btn-primary" onclick="openModal('signup-modal')">회원가입</button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard">
+                <div class="welcome-card">
+                    <h1>환영합니다!</h1>
+                    <p>학생과 교사 간의 원활한 소통 및 정보 공유를 위한 스마트 웹 포털입니다.</p>
+                </div>
+                
+                <!-- Placeholder for actual content -->
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>최신 공지사항</h3>
+                        <p class="empty-state">등록된 공지사항이 없습니다.</p>
+                    </div>
+                    <div class="card">
+                        <h3>오늘의 시간표</h3>
+                        <p class="empty-state">시간표 정보가 없습니다.</p>
+                    </div>
+                    <div class="card">
+                        <h3>다가오는 과제</h3>
+                        <p class="empty-state">진행 중인 과제가 없습니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="footer-links">
+                    <a href="#" onclick="openTerms('terms')">이용약관</a>
+                    <span class="divider">|</span>
+                    <a href="#" onclick="openTerms('privacy')">개인정보처리방침</a>
+                    <span class="divider">|</span>
+                    <a href="#" onclick="openTerms('legal')">책임의한계와법적고지</a>
+                </div>
+                <div class="copyright">
+                    &copy; 2026 School Web Portal. All rights reserved.
+                </div>
+            </footer>
+        </main>
+
+        <!-- Right Sidebar (Quick Links) -->
+        <aside class="sidebar right-sidebar">
+            <h3>바로가기</h3>
+            <div class="quick-links">
+                <a href="#" class="quick-link-card">
+                    <div class="icon-box"><span class="material-icons-outlined">public</span></div>
+                    <span>학교홈페이지</span>
+                </a>
+                <a href="#" class="quick-link-card">
+                    <div class="icon-box"><span class="material-icons-outlined">psychology_alt</span></div>
+                    <span>Wee클래스</span>
+                </a>
+                <a href="#" class="quick-link-card">
+                    <div class="icon-box"><span class="material-icons-outlined">restaurant</span></div>
+                    <span>급식표</span>
+                </a>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal">
+            <button class="close-btn" onclick="closeModal('login-modal')"><span class="material-icons-outlined">close</span></button>
+            <div class="modal-header">
+                <h2>로그인</h2>
+                <p>포털 서비스 이용을 위해 로그인해주세요.</p>
+            </div>
+            <div class="modal-body">
+                <form class="auth-form" onsubmit="event.preventDefault(); alert('로그인 기능은 준비중입니다.');">
+                    <div class="form-group">
+                        <label>아이디 (ID)</label>
+                        <input type="text" placeholder="아이디를 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호</label>
+                        <input type="password" placeholder="비밀번호를 입력하세요" required>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox"> 자동로그인
+                        </label>
+                        <a href="#" class="text-link" onclick="alert('비밀번호 찾기(이메일/SMS 인증) 페이지로 이동합니다.')">비밀번호 찾기</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">로그인</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal-overlay">
+        <div class="modal modal-lg">
+            <button class="close-btn" onclick="closeModal('signup-modal')"><span class="material-icons-outlined">close</span></button>
+            <div class="modal-header">
+                <h2>회원가입</h2>
+                <p>학생 또는 교사로 가입할 수 있습니다.</p>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchSignupTab('student')">학생 회원가입</button>
+                    <button class="tab-btn" onclick="switchSignupTab('teacher')">교사 회원가입</button>
+                </div>
+                
+                <!-- Student Signup Form -->
+                <form id="signup-student-form" class="auth-form" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label>아이디 (ID)</label>
+                        <div class="input-with-btn">
+                            <input type="text" placeholder="S + 입학년도 5자리 (예: S24001)" required pattern="^[Ss][0-9]{5}$" title="S 또는 s와 입학년도 5자리를 입력하세요.">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>이름</label>
+                        <input type="text" placeholder="실명을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>이메일</label>
+                        <div class="input-with-btn">
+                            <input type="email" placeholder="학교 이메일을 입력하세요" required>
+                            <button type="button" class="btn btn-outline btn-sm">인증요청</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호</label>
+                        <input type="password" placeholder="비밀번호를 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호 확인</label>
+                        <input type="password" placeholder="비밀번호를 다시 입력하세요" required>
+                    </div>
+                    <div class="form-options terms-agree">
+                        <label class="checkbox-label">
+                            <input type="checkbox" required> [필수] 개인정보 수집 및 이용 동의
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">가입 신청 (승인 대기)</button>
+                </form>
+
+                <!-- Teacher Signup Form -->
+                <form id="signup-teacher-form" class="auth-form hidden" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label>아이디 (ID)</label>
+                        <div class="input-with-btn">
+                            <input type="text" placeholder="T + 임용년도 5자리 (예: T20001)" required pattern="^[Tt][0-9]{5}$" title="T 또는 t와 임용년도 5자리를 입력하세요.">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>이름</label>
+                        <input type="text" placeholder="실명을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>이메일</label>
+                        <div class="input-with-btn">
+                            <input type="email" placeholder="교직원 이메일을 입력하세요" required>
+                            <button type="button" class="btn btn-outline btn-sm">인증요청</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호</label>
+                        <input type="password" placeholder="비밀번호를 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호 확인</label>
+                        <input type="password" placeholder="비밀번호를 다시 입력하세요" required>
+                    </div>
+                    <div class="form-options terms-agree">
+                        <label class="checkbox-label">
+                            <input type="checkbox" required> [필수] 개인정보 수집 및 이용 동의
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">가입 신청 (승인 대기)</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms Modal (Markdown) -->
+    <div id="terms-modal" class="modal-overlay">
+        <div class="modal modal-lg">
+            <button class="close-btn" onclick="closeModal('terms-modal')"><span class="material-icons-outlined">close</span></button>
+            <div class="modal-header">
+                <h2 id="terms-title">약관</h2>
+            </div>
+            <div class="modal-body markdown-body" id="terms-content">
+                <!-- Markdown content will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Markdown Parser (marked.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Custom JS -->
+    <script src="app.js"></script>
+</body>
+</html>
