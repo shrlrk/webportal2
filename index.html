@@ -8,8 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -122,20 +122,72 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        .markdown-body h1 { font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem; }
+        .markdown-body h2 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .markdown-body p { margin-bottom: 1rem; color: #4b5563; }
+        .markdown-body ul, .markdown-body ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #4b5563; list-style-type: disc; }
+        .markdown-body li { margin-bottom: 0.25rem; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col font-body-md text-body-md">
-    <!-- TopNavBar - Execution of JSON styles -->
+    <!-- TopNavBar -->
     <header class="fixed top-0 left-0 right-0 z-50 bg-surface dark:bg-surface border-b border-outline-variant dark:border-outline">
         <div class="flex justify-between items-center h-16 w-full px-gutter max-w-container-max mx-auto">
             <div class="flex items-center gap-xs">
-                <!-- School Logo Minimalist -->
                 <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary">
                     <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">school</span>
                 </div>
                 <h1 class="text-headline-lg font-headline-lg font-bold text-on-surface dark:text-on-surface">우리학교</h1>
             </div>
-            <!-- Trailing Icons -->
             <div class="flex items-center gap-md">
                 <button class="p-2 rounded-full hover:bg-surface-container-low transition-colors duration-200">
                     <span class="material-symbols-outlined text-on-surface-variant">notifications</span>
@@ -147,10 +199,9 @@
         </div>
     </header>
     
-    <!-- Main Content: Centered Layout Inspired by Search Engines -->
+    <!-- Main Content -->
     <main class="flex-grow flex flex-col items-center justify-center px-gutter pt-16">
         <div class="w-full max-w-[640px] text-center space-y-xl">
-            <!-- Branding Section -->
             <div class="space-y-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div class="inline-flex items-center justify-center w-24 h-24 rounded-[24px] border border-outline-variant mb-md bg-surface-container-lowest">
                     <span class="material-symbols-outlined text-[48px] text-primary" style="font-variation-settings: 'FILL' 1;">architecture</span>
@@ -159,7 +210,6 @@
                 <p class="font-headline-md text-headline-md text-on-surface-variant opacity-70">모든 학습 정보를 한눈에, 스마트한 학교 생활의 시작</p>
             </div>
             
-            <!-- Central Search Bar Component -->
             <div class="relative w-full group animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
                 <div class="search-focus-ring flex items-center w-full h-24 border border-outline-variant rounded-full px-8 transition-all duration-300 bg-[#F8F9FB]">
                     <span class="material-symbols-outlined text-outline mr-4">search</span>
@@ -171,7 +221,6 @@
                 </div>
             </div>
             
-            <!-- Navigation Tabs - Shared Component Mapping -->
             <nav class="flex justify-center items-center gap-lg animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
                 <a class="group relative px-2 pb-1 font-headline-md transition-all duration-200 scale-98 active:scale-95 text-on-surface-variant text-headline-md" href="#">교과</a>
                 <a class="px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-primary border-b-2 border-primary text-headline-md" href="#">학년</a>
@@ -181,23 +230,74 @@
         </div>
     </main>
     
-    <!-- Footer - Execution of JSON styles -->
+    <!-- Footer -->
     <footer class="bg-surface dark:bg-surface border-t border-outline-variant dark:border-outline">
         <div class="flex flex-col md:flex-row justify-between items-center py-lg px-gutter w-full max-w-container-max mx-auto">
             <div class="flex items-center gap-md order-2 md:order-1 mt-md md:mt-0">
                 <span class="text-label-md font-headline-md text-on-surface-variant text-body-lg">우리학교</span>
-                <span class="font-label-sm text-label-sm text-on-secondary-container opacity-60 text-label-md">© 2024 우리학교. All rights reserved.</span>
+                <span class="font-label-sm text-label-sm text-on-secondary-container opacity-60 text-label-md">© 2026 우리학교. All rights reserved. 정보관리책임자: 행정실장 홍길동</span>
             </div>
             <div class="flex gap-lg order-1 md:order-2">
-                <a class="font-label-sm text-label-sm text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary underline transition-all opacity-80 hover:opacity-100 text-label-md" href="#">Terms</a>
-                <a class="font-label-sm text-label-sm text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary underline transition-all opacity-80 hover:opacity-100 text-label-md" href="#">Privacy</a>
-                <a class="font-label-sm text-label-sm text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary underline transition-all opacity-80 hover:opacity-100 text-label-md" href="#">Manager</a>
+                <button onclick="openModal('terms')" class="font-label-sm text-label-sm text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary underline transition-all opacity-80 hover:opacity-100 text-label-md">이용약관</button>
+                <button onclick="openModal('privacy')" class="font-label-sm text-label-sm text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary underline transition-all opacity-80 hover:opacity-100 text-label-md">개인정보처리방침</button>
+                <button class="font-label-sm text-label-sm text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary underline transition-all opacity-80 hover:opacity-100 text-label-md">Manager</button>
             </div>
         </div>
     </footer>
+
+    <!-- Modal Template -->
+    <div id="document-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title" class="text-headline-md font-bold text-on-surface">문서</h2>
+                <button onclick="closeModal()" class="p-2 rounded-full hover:bg-surface-container-low transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body markdown-body" id="modal-body-content">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
     
-    <!-- Micro-interaction Script -->
     <script>
+        // Modal Logic
+        const overlay = document.getElementById('document-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body-content');
+
+        // Close when clicking outside content
+        overlay.addEventListener('click', (e) => {
+            if(e.target === overlay) closeModal();
+        });
+
+        async function openModal(docType) {
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            modalBody.innerHTML = '<div class="text-center py-8">로딩 중...</div>';
+            
+            try {
+                let fileToLoad = docType === 'terms' ? 'terms.md' : 'privacy.md';
+                let title = docType === 'terms' ? '이용약관' : '개인정보처리방침';
+                
+                modalTitle.innerText = title;
+                
+                const response = await fetch(fileToLoad);
+                if(!response.ok) throw new Error('파일을 불러오는데 실패했습니다.');
+                
+                const text = await response.text();
+                modalBody.innerHTML = marked.parse(text);
+            } catch (error) {
+                modalBody.innerHTML = '<div class="text-error">문서를 불러오는 중 오류가 발생했습니다. (' + error.message + ')</div>';
+            }
+        }
+
+        function closeModal() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const input = document.querySelector('input');
             const searchContainer = input.parentElement;
@@ -210,28 +310,6 @@
             input.addEventListener('blur', () => {
                 searchContainer.classList.remove('bg-white');
                 searchContainer.classList.add('bg-[#F8F9FB]');
-            });
-
-            // Tab switching logic (Visual only)
-            const tabs = document.querySelectorAll('nav a');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    tabs.forEach(t => {
-                        t.classList.remove('text-primary', 'border-b-2', 'border-primary');
-                        t.classList.add('text-on-surface-variant');
-                    });
-                    tab.classList.remove('text-on-surface-variant');
-                    tab.classList.add('text-primary', 'border-b-2', 'border-primary');
-                });
-            });
-
-            // Keyboard shortcut placeholder
-            document.addEventListener('keydown', (e) => {
-                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-                    e.preventDefault();
-                    input.focus();
-                }
             });
         });
     </script>
