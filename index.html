@@ -1,127 +1,50 @@
 <!DOCTYPE html>
-<html class="light" lang="ko" style="">
+<html lang="ko">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>우리학교 Web Portal</title>
+    <title>학교생활+</title>
     <!-- Google Fonts: Plus Jakarta Sans & Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-secondary-container": "#5e6572",
-                        "secondary-container": "#dce2f3",
-                        "tertiary": "#525557",
-                        "error": "#ba1a1a",
-                        "primary-container": "#2563eb",
-                        "on-secondary-fixed": "#151c27",
-                        "on-primary-fixed-variant": "#003ea8",
-                        "on-primary-container": "#eeefff",
-                        "surface-container-highest": "#dce2f7",
-                        "tertiary-fixed-dim": "#c5c7c8",
-                        "on-tertiary-container": "#eff0f2",
-                        "surface-dim": "#d3daef",
-                        "on-background": "#141b2b",
-                        "primary-fixed": "#dbe1ff",
-                        "outline": "#737686",
-                        "primary": "#004ac6",
-                        "on-primary-fixed": "#00174b",
-                        "tertiary-container": "#6b6d6f",
-                        "on-tertiary-fixed": "#191c1e",
-                        "primary-fixed-dim": "#b4c5ff",
-                        "on-tertiary-fixed-variant": "#444749",
-                        "surface-container-high": "#e1e8fd",
-                        "background": "#f9f9ff",
-                        "on-secondary-fixed-variant": "#404754",
-                        "secondary-fixed-dim": "#c0c7d6",
-                        "surface-variant": "#dce2f7",
-                        "on-primary": "#ffffff",
-                        "surface-tint": "#0053db",
-                        "inverse-surface": "#293040",
-                        "on-surface": "#141b2b",
-                        "on-error": "#ffffff",
-                        "surface-container": "#e9edff",
-                        "inverse-on-surface": "#edf0ff",
-                        "tertiary-fixed": "#e1e2e4",
-                        "secondary": "#585f6c",
-                        "outline-variant": "#c3c6d7",
-                        "secondary-fixed": "#dce2f3",
-                        "on-secondary": "#ffffff",
-                        "error-container": "#ffdad6",
-                        "surface-container-low": "#f1f3ff",
-                        "surface": "#f9f9ff",
-                        "inverse-primary": "#b4c5ff",
-                        "surface-bright": "#f9f9ff",
-                        "on-surface-variant": "#434655",
-                        "surface-container-lowest": "#ffffff",
-                        "on-tertiary": "#ffffff",
-                        "on-error-container": "#93000a"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "xl": "80px",
-                        "container-max": "1100px",
-                        "base": "4px",
-                        "gutter": "24px",
-                        "md": "24px",
-                        "sm": "16px",
-                        "xs": "8px",
-                        "lg": "48px"
-                    },
-                    "fontFamily": {
-                        "headline-lg-mobile": ["Plus Jakarta Sans"],
-                        "display-lg": ["Plus Jakarta Sans"],
-                        "body-md": ["Inter"],
-                        "headline-lg": ["Plus Jakarta Sans"],
-                        "headline-md": ["Plus Jakarta Sans"],
-                        "body-lg": ["Inter"],
-                        "label-md": ["Inter"],
-                        "label-sm": ["Inter"]
-                    },
-                    "fontSize": {
-                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
-                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600"}]
-                    }
-                },
-            },
-        }
-    </script>
     <style>
         body {
             background-color: #ffffff;
-            color: #141b2b;
+            color: #202124; /* Google dark gray */
             -webkit-font-smoothing: antialiased;
+            font-family: 'Inter', sans-serif;
         }
         .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
             vertical-align: middle;
         }
-        .search-focus-ring:focus-within {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-        }
-        /* Custom scrollbar for minimalist look */
+        /* Minimal scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+        
+        /* Thin underline animation for nav */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #1a73e8; /* Google Blue */
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.2s ease;
+        }
+        .nav-link:hover::after, .nav-item:hover .nav-link::after, .nav-link.active::after {
+            transform: scaleX(1);
+        }
         
         /* Modal Styles */
         .modal-overlay {
@@ -130,7 +53,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -138,7 +61,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(2px);
         }
         .modal-overlay.active {
             opacity: 1;
@@ -161,7 +84,7 @@
         }
         .modal-header {
             padding: 24px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid #f3f4f6;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -171,92 +94,88 @@
             overflow-y: auto;
             line-height: 1.6;
         }
-        .markdown-body h1 { font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem; }
-        .markdown-body h2 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-        .markdown-body p { margin-bottom: 1rem; color: #4b5563; }
-        .markdown-body ul, .markdown-body ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #4b5563; list-style-type: disc; }
+        .markdown-body h1 { font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem; color: #202124; }
+        .markdown-body h2 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #202124; }
+        .markdown-body p { margin-bottom: 1rem; color: #5f6368; }
+        .markdown-body ul, .markdown-body ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #5f6368; list-style-type: disc; }
         .markdown-body li { margin-bottom: 0.25rem; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col font-body-md text-body-md">
-    <!-- TopNavBar -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-surface dark:bg-surface border-b border-outline-variant dark:border-outline">
-        <div class="flex justify-between items-center h-16 w-full px-gutter max-w-container-max mx-auto">
-            <div class="flex items-center gap-xs">
-                <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary">
-                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">school</span>
-                </div>
-                <h1 class="text-headline-lg font-headline-lg font-bold text-on-surface dark:text-on-surface">우리학교</h1>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
+        <div class="flex justify-between items-center h-16 w-full px-6 max-w-7xl mx-auto">
+            <div class="flex items-center">
+                <h1 class="text-lg font-medium text-gray-800 tracking-tight" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    <span class="text-gray-500 font-normal mr-1">○○고등학교</span>학교생활<span class="text-blue-600">+</span>
+                </h1>
             </div>
-            <div class="flex items-center gap-md">
-                <button class="p-2 rounded-full hover:bg-surface-container-low transition-colors duration-200">
-                    <span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+            <div class="flex items-center gap-4">
+                <button class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500">
+                    <span class="material-symbols-outlined">notifications</span>
                 </button>
-                <button class="p-2 rounded-full hover:bg-surface-container-low transition-colors duration-200">
-                    <span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+                <button class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500">
+                    <span class="material-symbols-outlined">account_circle</span>
                 </button>
             </div>
         </div>
     </header>
     
     <!-- Main Content -->
-    <main class="flex-grow flex flex-col items-center justify-start px-gutter pt-[18vh]">
-        <div class="w-full max-w-[640px] text-center space-y-8">
-            <div class="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <div class="inline-flex items-center justify-center w-20 h-20 rounded-[20px] border border-outline-variant mb-2 bg-surface-container-lowest">
-                    <span class="material-symbols-outlined text-[40px] text-primary" style="font-variation-settings: 'FILL' 1;">architecture</span>
-                </div>
-                <h2 class="font-display-lg text-[40px] tracking-tight text-on-surface">우리학교 Web Portal</h2>
-                <p class="font-headline-md text-body-lg text-on-surface-variant opacity-70">모든 학습 정보를 한눈에, 스마트한 학교 생활의 시작</p>
+    <main class="flex-grow flex flex-col items-center justify-start px-4 pt-[20vh]">
+        <div class="w-full max-w-[600px] text-center">
+            
+            <!-- Branding -->
+            <div class="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <p class="text-lg font-medium text-gray-500 mb-1 tracking-wider">○○고등학교</p>
+                <h2 class="text-[52px] font-bold text-[#202124] tracking-tight leading-none" style="font-family: 'Plus Jakarta Sans', sans-serif;">학교생활<span class="text-[#1a73e8]">+</span></h2>
             </div>
             
-            <div class="relative w-full group animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-                <div class="search-focus-ring flex items-center w-full h-24 border border-outline-variant rounded-full px-8 transition-all duration-300 bg-[#F8F9FB]">
-                    <span class="material-symbols-outlined text-outline mr-4">search</span>
-                    <input class="flex-grow bg-transparent border-none focus:ring-0 text-headline-md font-headline-md text-on-surface placeholder:text-outline" placeholder="" type="text">
-                    <div class="flex items-center gap-sm">
-                        <kbd class="hidden md:inline-flex items-center h-6 px-1.5 rounded border border-outline-variant bg-surface-container-lowest text-[10px] font-medium text-outline">⌘K</kbd>
-                        <button class="material-symbols-outlined text-primary hover:scale-110 transition-transform">mic</button>
-                    </div>
+            <!-- Search Bar -->
+            <div class="relative w-full mx-auto max-w-[584px] mb-8 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+                <div class="flex items-center w-full h-[56px] bg-white border border-[#dfe1e5] rounded-[28px] px-4 transition-shadow duration-200 hover:shadow-[0_1px_6px_rgba(32,33,36,0.28)] focus-within:shadow-[0_1px_6px_rgba(32,33,36,0.28)] focus-within:border-transparent">
+                    <span class="material-symbols-outlined text-[#9aa0a6] mr-3">search</span>
+                    <input class="flex-grow bg-transparent border-none focus:ring-0 text-[16px] text-[#202124] placeholder:text-[#9aa0a6] outline-none w-full" placeholder="필요한 서비스를 검색하세요." type="text">
                 </div>
             </div>
             
-            <nav class="flex justify-center items-center gap-lg animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
+            <!-- Navigation -->
+            <nav class="flex justify-center items-center gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
                 <!-- 교과 Menu -->
-                <div class="relative group">
-                    <a class="nav-tab px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-on-surface-variant text-headline-md inline-block cursor-pointer" href="#">교과</a>
-                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-32 bg-white border border-outline-variant rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">국어</a>
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">수학</a>
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">영어</a>
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">사회</a>
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">과학</a>
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">예체능</a>
+                <div class="relative group nav-item">
+                    <a class="nav-link nav-tab px-1 pb-1 text-[15px] font-medium text-[#5f6368] hover:text-[#202124] transition-colors duration-200 inline-block cursor-pointer" href="#">교과</a>
+                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-32 bg-white border border-gray-100 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">국어</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">수학</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">영어</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">사회</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">과학</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">예체능</a>
                     </div>
                 </div>
 
                 <!-- 학년 Menu -->
-                <div class="relative group">
-                    <a class="nav-tab px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-primary border-b-2 border-primary text-headline-md inline-block cursor-pointer" href="#">학년</a>
-                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-32 bg-white border border-outline-variant rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">1학년</a>
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">2학년</a>
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">3학년</a>
+                <div class="relative group nav-item">
+                    <a class="nav-link nav-tab active px-1 pb-1 text-[15px] font-medium text-[#202124] transition-colors duration-200 inline-block cursor-pointer" href="#">학년</a>
+                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-32 bg-white border border-gray-100 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">1학년</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">2학년</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">3학년</a>
                     </div>
                 </div>
 
                 <!-- 진로 Menu -->
-                <div class="relative group">
-                    <a class="nav-tab px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-on-surface-variant text-headline-md inline-block cursor-pointer" href="#">진로</a>
+                <div class="relative group nav-item">
+                    <a class="nav-link nav-tab px-1 pb-1 text-[15px] font-medium text-[#5f6368] hover:text-[#202124] transition-colors duration-200 inline-block cursor-pointer" href="#">진로</a>
                 </div>
 
                 <!-- 학교생활 Menu -->
-                <div class="relative group">
-                    <a class="nav-tab px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-on-surface-variant text-headline-md inline-block cursor-pointer" href="#">학교생활</a>
-                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-36 bg-white border border-outline-variant rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors whitespace-nowrap">wee클래스</a>
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors whitespace-nowrap">꿈마루도서관</a>
-                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors whitespace-nowrap">보건실</a>
+                <div class="relative group nav-item">
+                    <a class="nav-link nav-tab px-1 pb-1 text-[15px] font-medium text-[#5f6368] hover:text-[#202124] transition-colors duration-200 inline-block cursor-pointer" href="#">학교생활</a>
+                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-36 bg-white border border-gray-100 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043] whitespace-nowrap">wee클래스</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043] whitespace-nowrap">꿈마루도서관</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043] whitespace-nowrap">보건실</a>
                     </div>
                 </div>
             </nav>
@@ -264,17 +183,16 @@
     </main>
     
     <!-- Footer -->
-    <footer class="bg-surface dark:bg-surface border-t border-outline-variant dark:border-outline">
-        <div class="flex flex-col md:flex-row justify-between items-center py-lg px-gutter w-full max-w-container-max mx-auto">
-            <div class="flex items-center gap-md order-2 md:order-1 mt-md md:mt-0">
-                <span class="text-label-md font-headline-md text-on-surface-variant text-body-lg">우리학교</span>
-                <span class="font-label-sm text-label-sm text-on-secondary-container opacity-60 text-label-md">© 2026 우리학교. All rights reserved.</span>
+    <footer class="bg-[#f8f9fa] border-t border-[#dadce0]">
+        <div class="flex flex-col md:flex-row justify-between items-center py-4 px-6 w-full max-w-7xl mx-auto text-[13px] text-[#70757a]">
+            <div class="flex items-center gap-4 mb-3 md:mb-0">
+                <span>© 2026 ○○고등학교. All rights reserved.</span>
             </div>
-            <div class="flex gap-lg order-1 md:order-2">
-                <button onclick="openModal('terms')" class="font-label-sm text-label-sm text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary underline transition-all opacity-80 hover:opacity-100 text-label-md">이용약관</button>
-                <button onclick="openModal('privacy')" class="font-label-sm text-label-sm text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary underline transition-all opacity-80 hover:opacity-100 text-label-md">개인정보처리방침</button>
-                <button class="font-label-sm text-label-sm text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary underline transition-all opacity-80 hover:opacity-100 text-label-md">문의하기</button>
-                <button class="font-label-sm text-label-sm text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary underline transition-all opacity-80 hover:opacity-100 text-label-md">시스템관리</button>
+            <div class="flex gap-6">
+                <button onclick="openModal('terms')" class="hover:text-[#3c4043] transition-colors">이용약관</button>
+                <button onclick="openModal('privacy')" class="hover:text-[#3c4043] transition-colors">개인정보처리방침</button>
+                <button class="hover:text-[#3c4043] transition-colors">문의하기</button>
+                <button class="hover:text-[#3c4043] transition-colors">시스템관리</button>
             </div>
         </div>
     </footer>
@@ -283,8 +201,8 @@
     <div id="document-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modal-title" class="text-headline-md font-bold text-on-surface">문서</h2>
-                <button onclick="closeModal()" class="p-2 rounded-full hover:bg-surface-container-low transition-colors">
+                <h2 id="modal-title" class="text-xl font-bold text-gray-800">문서</h2>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-700 transition-colors">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
@@ -300,7 +218,6 @@
         const modalTitle = document.getElementById('modal-title');
         const modalBody = document.getElementById('modal-body-content');
 
-        // Close when clicking outside content
         overlay.addEventListener('click', (e) => {
             if(e.target === overlay) closeModal();
         });
@@ -309,7 +226,7 @@
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
             
-            modalBody.innerHTML = '<div class="text-center py-8">로딩 중...</div>';
+            modalBody.innerHTML = '<div class="text-center py-8 text-gray-500">로딩 중...</div>';
             
             try {
                 let fileToLoad = docType === 'terms' ? 'terms.md' : 'privacy.md';
@@ -323,7 +240,7 @@
                 const text = await response.text();
                 modalBody.innerHTML = marked.parse(text);
             } catch (error) {
-                modalBody.innerHTML = '<div class="text-error">문서를 불러오는 중 오류가 발생했습니다. (' + error.message + ')</div>';
+                modalBody.innerHTML = '<div class="text-red-500">문서를 불러오는 중 오류가 발생했습니다. (' + error.message + ')</div>';
             }
         }
 
@@ -332,31 +249,18 @@
             document.body.style.overflow = '';
         }
 
+        // Tab switching logic (Visual only)
         document.addEventListener('DOMContentLoaded', () => {
-            const input = document.querySelector('input');
-            const searchContainer = input.parentElement;
-
-            input.addEventListener('focus', () => {
-                searchContainer.classList.add('bg-white');
-                searchContainer.classList.remove('bg-[#F8F9FB]');
-            });
-
-            input.addEventListener('blur', () => {
-                searchContainer.classList.remove('bg-white');
-                searchContainer.classList.add('bg-[#F8F9FB]');
-            });
-
-            // Tab switching logic (Visual only)
             const tabs = document.querySelectorAll('.nav-tab');
             tabs.forEach(tab => {
                 tab.addEventListener('click', (e) => {
                     e.preventDefault();
                     tabs.forEach(t => {
-                        t.classList.remove('text-primary', 'border-b-2', 'border-primary');
-                        t.classList.add('text-on-surface-variant');
+                        t.classList.remove('active', 'text-[#202124]');
+                        t.classList.add('text-[#5f6368]');
                     });
-                    tab.classList.remove('text-on-surface-variant');
-                    tab.classList.add('text-primary', 'border-b-2', 'border-primary');
+                    tab.classList.remove('text-[#5f6368]');
+                    tab.classList.add('active', 'text-[#202124]');
                 });
             });
         });
