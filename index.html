@@ -222,10 +222,43 @@
             </div>
             
             <nav class="flex justify-center items-center gap-lg animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
-                <a class="group relative px-2 pb-1 font-headline-md transition-all duration-200 scale-98 active:scale-95 text-on-surface-variant text-headline-md" href="#">교과</a>
-                <a class="px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-primary border-b-2 border-primary text-headline-md" href="#">학년</a>
-                <a class="px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-on-surface-variant text-headline-md" href="#">진로</a>
-                <a class="px-2 pb-1 font-headline-md text-on-surface-variant hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-headline-md" href="#">학교생활</a>
+                <!-- 교과 Menu -->
+                <div class="relative group">
+                    <a class="nav-tab px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-on-surface-variant text-headline-md inline-block cursor-pointer" href="#">교과</a>
+                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-32 bg-white border border-outline-variant rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">국어</a>
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">수학</a>
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">영어</a>
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">사회</a>
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">과학</a>
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">예체능</a>
+                    </div>
+                </div>
+
+                <!-- 학년 Menu -->
+                <div class="relative group">
+                    <a class="nav-tab px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-primary border-b-2 border-primary text-headline-md inline-block cursor-pointer" href="#">학년</a>
+                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-32 bg-white border border-outline-variant rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">1학년</a>
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">2학년</a>
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors">3학년</a>
+                    </div>
+                </div>
+
+                <!-- 진로 Menu -->
+                <div class="relative group">
+                    <a class="nav-tab px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-on-surface-variant text-headline-md inline-block cursor-pointer" href="#">진로</a>
+                </div>
+
+                <!-- 학교생활 Menu -->
+                <div class="relative group">
+                    <a class="nav-tab px-2 pb-1 font-headline-md hover:text-primary transition-colors duration-200 scale-98 active:scale-95 text-on-surface-variant text-headline-md inline-block cursor-pointer" href="#">학교생활</a>
+                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-36 bg-white border border-outline-variant rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors whitespace-nowrap">wee클래스</a>
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors whitespace-nowrap">꿈마루도서관</a>
+                        <a href="#" class="px-4 py-2 hover:bg-surface-container-low text-body-md text-on-surface hover:text-primary transition-colors whitespace-nowrap">보건실</a>
+                    </div>
+                </div>
             </nav>
         </div>
     </main>
@@ -311,6 +344,20 @@
             input.addEventListener('blur', () => {
                 searchContainer.classList.remove('bg-white');
                 searchContainer.classList.add('bg-[#F8F9FB]');
+            });
+
+            // Tab switching logic (Visual only)
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    tabs.forEach(t => {
+                        t.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                        t.classList.add('text-on-surface-variant');
+                    });
+                    tab.classList.remove('text-on-surface-variant');
+                    tab.classList.add('text-primary', 'border-b-2', 'border-primary');
+                });
             });
         });
     </script>
