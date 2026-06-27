@@ -13,7 +13,7 @@
     <style>
         body {
             background-color: #ffffff;
-            color: #202124; /* Google dark gray */
+            color: #202124;
             -webkit-font-smoothing: antialiased;
             font-family: 'Inter', sans-serif;
         }
@@ -21,30 +21,9 @@
             font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
             vertical-align: middle;
         }
-        /* Minimal scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
-        
-        /* Thin underline animation for nav */
-        .nav-link {
-            position: relative;
-        }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #1a73e8; /* Google Blue */
-            transform: scaleX(0);
-            transform-origin: center;
-            transition: transform 0.2s ease;
-        }
-        .nav-link:hover::after, .nav-item:hover .nav-link::after, .nav-link.active::after {
-            transform: scaleX(1);
-        }
         
         /* Modal Styles */
         .modal-overlay {
@@ -99,6 +78,17 @@
         .markdown-body p { margin-bottom: 1rem; color: #5f6368; }
         .markdown-body ul, .markdown-body ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #5f6368; list-style-type: disc; }
         .markdown-body li { margin-bottom: 0.25rem; }
+
+        /* Animation for submenus */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -107,7 +97,7 @@
         <div class="flex justify-between items-center h-16 w-full px-6 max-w-7xl mx-auto">
             <div class="flex items-center">
                 <h1 class="text-lg font-medium text-gray-800 tracking-tight" style="font-family: 'Plus Jakarta Sans', sans-serif;">
-                    <span class="text-gray-500 font-normal mr-1">○○고등학교</span>학교생활<span class="text-blue-600">+</span>
+                    <span class="text-gray-500 font-normal mr-1">○○고등학교</span>학교생활<span class="text-[#1a73e8]">+</span>
                 </h1>
             </div>
             <div class="flex items-center gap-4">
@@ -127,58 +117,78 @@
             
             <!-- Branding -->
             <div class="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <p class="text-lg font-medium text-gray-500 mb-1 tracking-wider">○○고등학교</p>
+                <p class="text-[16px] font-medium text-gray-500 mb-2 tracking-wider">○○고등학교</p>
                 <h2 class="text-[52px] font-bold text-[#202124] tracking-tight leading-none" style="font-family: 'Plus Jakarta Sans', sans-serif;">학교생활<span class="text-[#1a73e8]">+</span></h2>
             </div>
             
             <!-- Search Bar -->
-            <div class="relative w-full mx-auto max-w-[584px] mb-8 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+            <div class="relative w-full mx-auto max-w-[584px] mb-10 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
                 <div class="flex items-center w-full h-[56px] bg-white border border-[#dfe1e5] rounded-[28px] px-4 transition-shadow duration-200 hover:shadow-[0_1px_6px_rgba(32,33,36,0.28)] focus-within:shadow-[0_1px_6px_rgba(32,33,36,0.28)] focus-within:border-transparent">
                     <span class="material-symbols-outlined text-[#9aa0a6] mr-3">search</span>
                     <input class="flex-grow bg-transparent border-none focus:ring-0 text-[16px] text-[#202124] placeholder:text-[#9aa0a6] outline-none w-full" placeholder="필요한 서비스를 검색하세요." type="text">
                 </div>
             </div>
             
-            <!-- Navigation -->
-            <nav class="flex justify-center items-center gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-                <!-- 교과 Menu -->
-                <div class="relative group nav-item">
-                    <a class="nav-link nav-tab px-1 pb-1 text-[15px] font-medium text-[#5f6368] hover:text-[#202124] transition-colors duration-200 inline-block cursor-pointer" href="#">교과</a>
-                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-32 bg-white border border-gray-100 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">국어</a>
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">수학</a>
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">영어</a>
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">사회</a>
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">과학</a>
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">예체능</a>
-                    </div>
+            <!-- Primary Navigation (1차 메뉴) -->
+            <nav class="flex justify-center items-center gap-8 mb-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+                <div class="relative cursor-pointer group" onclick="switchTab('tab-subject', this)">
+                    <span class="nav-tab text-[21px] font-medium text-[#1a73e8] transition-colors duration-200 pb-1 inline-block">교과</span>
+                    <div class="nav-indicator absolute bottom-[-4px] left-0 w-full h-[2px] bg-[#1a73e8] scale-x-100 transition-transform duration-300"></div>
+                </div>
+                
+                <div class="h-5 w-[1px] bg-gray-200"></div>
+
+                <div class="relative cursor-pointer group" onclick="switchTab('tab-grade', this)">
+                    <span class="nav-tab text-[21px] font-medium text-[#5f6368] group-hover:text-[#202124] transition-colors duration-200 pb-1 inline-block">학년</span>
+                    <div class="nav-indicator absolute bottom-[-4px] left-0 w-full h-[2px] bg-[#1a73e8] scale-x-0 transition-transform duration-300"></div>
                 </div>
 
-                <!-- 학년 Menu -->
-                <div class="relative group nav-item">
-                    <a class="nav-link nav-tab active px-1 pb-1 text-[15px] font-medium text-[#202124] transition-colors duration-200 inline-block cursor-pointer" href="#">학년</a>
-                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-32 bg-white border border-gray-100 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">1학년</a>
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">2학년</a>
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043]">3학년</a>
-                    </div>
+                <div class="h-5 w-[1px] bg-gray-200"></div>
+
+                <div class="relative cursor-pointer group" onclick="switchTab('tab-career', this)">
+                    <span class="nav-tab text-[21px] font-medium text-[#5f6368] group-hover:text-[#202124] transition-colors duration-200 pb-1 inline-block">진로</span>
+                    <div class="nav-indicator absolute bottom-[-4px] left-0 w-full h-[2px] bg-[#1a73e8] scale-x-0 transition-transform duration-300"></div>
                 </div>
 
-                <!-- 진로 Menu -->
-                <div class="relative group nav-item">
-                    <a class="nav-link nav-tab px-1 pb-1 text-[15px] font-medium text-[#5f6368] hover:text-[#202124] transition-colors duration-200 inline-block cursor-pointer" href="#">진로</a>
-                </div>
+                <div class="h-5 w-[1px] bg-gray-200"></div>
 
-                <!-- 학교생활 Menu -->
-                <div class="relative group nav-item">
-                    <a class="nav-link nav-tab px-1 pb-1 text-[15px] font-medium text-[#5f6368] hover:text-[#202124] transition-colors duration-200 inline-block cursor-pointer" href="#">학교생활</a>
-                    <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-36 bg-white border border-gray-100 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043] whitespace-nowrap">wee클래스</a>
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043] whitespace-nowrap">꿈마루도서관</a>
-                        <a href="#" class="px-4 py-2 hover:bg-gray-50 text-[14px] text-[#3c4043] whitespace-nowrap">보건실</a>
-                    </div>
+                <div class="relative cursor-pointer group" onclick="switchTab('tab-life', this)">
+                    <span class="nav-tab text-[21px] font-medium text-[#5f6368] group-hover:text-[#202124] transition-colors duration-200 pb-1 inline-block">학교생활</span>
+                    <div class="nav-indicator absolute bottom-[-4px] left-0 w-full h-[2px] bg-[#1a73e8] scale-x-0 transition-transform duration-300"></div>
                 </div>
             </nav>
+
+            <!-- Secondary Navigation (2차 메뉴) -->
+            <div class="min-h-[120px] animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+                <!-- 교과 (Subject) -->
+                <div id="tab-subject" class="submenu-container grid grid-cols-3 gap-3 max-w-[400px] mx-auto fade-enter-active">
+                    <button class="sub-btn border-[#d2e3fc] bg-[#e8f0fe] text-[#1a73e8] py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">국어</button>
+                    <button class="sub-btn border-gray-200 bg-white text-gray-700 hover:bg-gray-50 py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">영어</button>
+                    <button class="sub-btn border-gray-200 bg-white text-gray-700 hover:bg-gray-50 py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">수학</button>
+                    <button class="sub-btn border-gray-200 bg-white text-gray-700 hover:bg-gray-50 py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">사회</button>
+                    <button class="sub-btn border-gray-200 bg-white text-gray-700 hover:bg-gray-50 py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">과학</button>
+                    <button class="sub-btn border-gray-200 bg-white text-gray-700 hover:bg-gray-50 py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">예체능</button>
+                </div>
+                
+                <!-- 학년 (Grade) -->
+                <div id="tab-grade" class="submenu-container hidden grid-cols-3 gap-3 max-w-[320px] mx-auto">
+                    <button class="sub-btn border-[#d2e3fc] bg-[#e8f0fe] text-[#1a73e8] py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">1학년</button>
+                    <button class="sub-btn border-gray-200 bg-white text-gray-700 hover:bg-gray-50 py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">2학년</button>
+                    <button class="sub-btn border-gray-200 bg-white text-gray-700 hover:bg-gray-50 py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">3학년</button>
+                </div>
+
+                <!-- 진로 (Career) -->
+                <div id="tab-career" class="submenu-container hidden flex justify-center gap-3 max-w-[400px] mx-auto">
+                    <p class="text-gray-500 mt-4">진로 관련 하위 메뉴가 없습니다.</p>
+                </div>
+
+                <!-- 학교생활 (School Life) -->
+                <div id="tab-life" class="submenu-container hidden grid-cols-3 gap-3 max-w-[420px] mx-auto">
+                    <button class="sub-btn border-[#d2e3fc] bg-[#e8f0fe] text-[#1a73e8] py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">꿈마루도서관</button>
+                    <button class="sub-btn border-gray-200 bg-white text-gray-700 hover:bg-gray-50 py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">Wee클래스</button>
+                    <button class="sub-btn border-gray-200 bg-white text-gray-700 hover:bg-gray-50 py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200">보건실</button>
+                </div>
+            </div>
         </div>
     </main>
     
@@ -225,13 +235,11 @@
         async function openModal(docType) {
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
-            
             modalBody.innerHTML = '<div class="text-center py-8 text-gray-500">로딩 중...</div>';
             
             try {
                 let fileToLoad = docType === 'terms' ? 'terms.md' : 'privacy.md';
                 let title = docType === 'terms' ? '이용약관' : '개인정보처리방침';
-                
                 modalTitle.innerText = title;
                 
                 const response = await fetch(fileToLoad);
@@ -249,19 +257,57 @@
             document.body.style.overflow = '';
         }
 
-        // Tab switching logic (Visual only)
-        document.addEventListener('DOMContentLoaded', () => {
-            const tabs = document.querySelectorAll('.nav-tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    tabs.forEach(t => {
-                        t.classList.remove('active', 'text-[#202124]');
-                        t.classList.add('text-[#5f6368]');
-                    });
-                    tab.classList.remove('text-[#5f6368]');
-                    tab.classList.add('active', 'text-[#202124]');
+        // Tab Switching Logic
+        function switchTab(tabId, el) {
+            // Reset primary nav styling
+            document.querySelectorAll('.nav-tab').forEach(t => {
+                t.classList.remove('text-[#1a73e8]');
+                t.classList.add('text-[#5f6368]');
+            });
+            document.querySelectorAll('.nav-indicator').forEach(i => {
+                i.classList.remove('scale-x-100');
+                i.classList.add('scale-x-0');
+            });
+            
+            // Set active primary nav
+            const textSpan = el.querySelector('.nav-tab');
+            const indicator = el.querySelector('.nav-indicator');
+            textSpan.classList.remove('text-[#5f6368]');
+            textSpan.classList.add('text-[#1a73e8]');
+            indicator.classList.remove('scale-x-0');
+            indicator.classList.add('scale-x-100');
+
+            // Hide all submenus
+            document.querySelectorAll('.submenu-container').forEach(c => {
+                c.classList.add('hidden');
+                c.classList.remove('grid', 'fade-enter', 'fade-enter-active');
+            });
+
+            // Show selected submenu with animation
+            const target = document.getElementById(tabId);
+            if (target) {
+                target.classList.remove('hidden');
+                if (tabId === 'tab-career') {
+                    target.classList.add('flex', 'fade-enter');
+                } else {
+                    target.classList.add('grid', 'fade-enter');
+                }
+                
+                // Trigger reflow to restart animation
+                void target.offsetWidth;
+                target.classList.add('fade-enter-active');
+                target.classList.remove('fade-enter');
+            }
+        }
+
+        // Submenu button selection logic
+        document.querySelectorAll('.sub-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const siblings = btn.parentElement.querySelectorAll('.sub-btn');
+                siblings.forEach(s => {
+                    s.className = 'sub-btn border-gray-200 bg-white text-gray-700 hover:bg-gray-50 py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200';
                 });
+                btn.className = 'sub-btn border-[#d2e3fc] bg-[#e8f0fe] text-[#1a73e8] py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200';
             });
         });
     </script>
