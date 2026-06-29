@@ -131,10 +131,13 @@
             
             <!-- Search Bar -->
             <div class="relative w-full mx-auto max-w-[584px] mb-10 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
-                <div class="flex items-center w-full h-[56px] bg-white border border-[#dfe1e5] rounded-[28px] px-4 transition-shadow duration-200 hover:shadow-[0_1px_6px_rgba(32,33,36,0.28)] focus-within:shadow-[0_1px_6px_rgba(32,33,36,0.28)] focus-within:border-transparent">
-                    <span class="material-symbols-outlined text-[#9aa0a6] mr-3">search</span>
-                    <input class="flex-grow bg-transparent border-none focus:ring-0 text-[16px] text-[#202124] placeholder:text-[#9aa0a6] outline-none w-full" placeholder="필요한 서비스를 검색하세요." type="text">
-                </div>
+                <form onsubmit="handleSearch(event)" class="flex items-center w-full h-[56px] bg-white border border-[#dfe1e5] rounded-[28px] pl-4 pr-2 transition-shadow duration-200 hover:shadow-[0_1px_6px_rgba(32,33,36,0.28)] focus-within:shadow-[0_1px_6px_rgba(32,33,36,0.28)] focus-within:border-transparent">
+                    <span class="material-symbols-outlined text-[#9aa0a6] mr-3 flex-shrink-0">search</span>
+                    <input id="search-input" class="flex-grow bg-transparent border-none focus:ring-0 text-[16px] text-[#202124] placeholder:text-[#9aa0a6] outline-none w-full min-w-0" placeholder="필요한 서비스를 검색하세요." type="text">
+                    <button type="submit" class="bg-[#3B82F6] hover:bg-[#2563EB] text-white font-semibold h-[40px] px-5 sm:px-6 rounded-[12px] transition-all duration-200 active:scale-95 flex-shrink-0 text-[14px] sm:text-[15px] ml-2">
+                        검색
+                    </button>
+                </form>
             </div>
             
             <!-- Primary Navigation (1차 메뉴) -->
@@ -318,6 +321,21 @@
                 btn.className = 'sub-btn border-[#d2e3fc] bg-[#e8f0fe] text-[#1a73e8] py-2.5 px-4 rounded-full border text-[15px] font-medium transition-colors duration-200';
             });
         });
+
+        // Search Logic
+        function handleSearch(event) {
+            event.preventDefault();
+            const input = document.getElementById('search-input');
+            const query = input.value.trim();
+            
+            if (!query) {
+                alert('검색어를 입력해 주세요.');
+                input.focus();
+                return;
+            }
+            
+            alert(`"${query}"에 대한 검색을 실행합니다.`);
+        }
     </script>
 </body>
 </html>
