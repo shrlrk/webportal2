@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, query, where, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { UserData } from '../../types';
 
 // 아이디(userId) 기반으로 사용자 조회 (문서 ID가 internalId로 변경됨)
@@ -40,8 +40,7 @@ export const completeUserVerification = async (docId: string, uid: string) => {
   await updateDoc(userRef, {
     uid,
     passwordSet: true,
-    isActive: true,
-    oneTimeCode: ""
+    updatedAt: serverTimestamp()
   });
 };
 
