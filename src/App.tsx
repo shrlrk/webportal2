@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -20,7 +20,7 @@ const App: React.FC = () => {
       <Route path="/setup-password" element={currentUser ? <Navigate to="/" /> : <PasswordSetupPage />} />
       
       {/* Public Routes with Layout */}
-      <Route path="/" element={<Layout />}>
+      <Route path="/" element={<Layout><Outlet /></Layout>}>
         <Route index element={<HomePage />} />
         <Route path="board" element={<BoardPage />} />
       </Route>
