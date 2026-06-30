@@ -106,7 +106,7 @@ const Header: React.FC = () => {
                     <button onClick={() => handleMenuClick(() => alertPlaceholder('즐겨찾기 목록'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">즐겨찾기 목록</button>
                     
                     <div className="border-t border-gray-100 my-1"></div>
-                    <button onClick={handleAuthAction} className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors font-medium">로그아웃</button>
+                    <button onClick={handleAuthAction} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors font-medium">로그아웃</button>
                   </>
                 )}
               </div>
