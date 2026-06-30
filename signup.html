@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>회원가입 - 학교생활+</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #202124;
+            -webkit-font-smoothing: antialiased;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Custom Radio Toggle */
+        .role-radio:checked + div {
+            background-color: #e8f0fe;
+            border-color: #d2e3fc;
+            color: #1a73e8;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
+        <div class="flex justify-between items-center h-16 w-full px-6 max-w-7xl mx-auto">
+            <div class="flex items-center cursor-pointer" onclick="location.href='index.html'">
+                <div class="flex flex-col items-start justify-center">
+                    <h1 class="text-lg font-medium text-gray-800 tracking-tight leading-none" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                        <span class="text-gray-500 font-normal mr-1">대영고등학교</span>학교생활<span class="text-[#1a73e8]">+</span>
+                    </h1>
+                    <span class="text-[10px] text-gray-400 mt-1 tracking-wider" style="font-family: 'Inter', sans-serif;">by DY365</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center px-4 pt-24 pb-12">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-8 sm:p-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: 'Plus Jakarta Sans', sans-serif;">회원가입</h2>
+                <p class="text-gray-500 text-sm">계정을 생성하여 모든 서비스를 이용해 보세요.</p>
+            </div>
+            
+            <form onsubmit="handleSignup(event)" class="space-y-5">
+                
+                <!-- Role Toggle -->
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="role" value="student" class="sr-only role-radio" checked onchange="updatePlaceholders()">
+                        <div class="flex items-center justify-center h-[44px] rounded-xl border border-gray-200 text-gray-600 text-sm transition-all">
+                            학생
+                        </div>
+                    </label>
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="role" value="staff" class="sr-only role-radio" onchange="updatePlaceholders()">
+                        <div class="flex items-center justify-center h-[44px] rounded-xl border border-gray-200 text-gray-600 text-sm transition-all">
+                            교직원
+                        </div>
+                    </label>
+                </div>
+
+                <div>
+                    <label id="id-label" for="userId" class="block text-sm font-medium text-gray-700 mb-1.5">학번</label>
+                    <input type="text" id="userId" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="예) 10101">
+                </div>
+                
+                <div>
+                    <label for="userName" class="block text-sm font-medium text-gray-700 mb-1.5">이름</label>
+                    <input type="text" id="userName" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="실명을 입력해 주세요">
+                </div>
+
+                <div>
+                    <label for="authCode" class="block text-sm font-medium text-gray-700 mb-1.5">가입 인증번호</label>
+                    <input type="text" id="authCode" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="학교에서 발급받은 인증번호 입력">
+                </div>
+                
+                <div class="h-px bg-gray-100 my-4"></div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">비밀번호</label>
+                    <input type="password" id="password" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="영문, 숫자 포함 8자 이상">
+                </div>
+                
+                <div>
+                    <label for="passwordConfirm" class="block text-sm font-medium text-gray-700 mb-1.5">비밀번호 확인</label>
+                    <input type="password" id="passwordConfirm" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="비밀번호를 한 번 더 입력해 주세요">
+                </div>
+                
+                <button type="submit" class="w-full h-[48px] mt-4 bg-[#1a73e8] hover:bg-[#1557b0] text-white font-semibold rounded-xl transition-colors duration-200 active:scale-[0.98]">
+                    회원가입 완료
+                </button>
+            </form>
+            
+            <div class="mt-8 text-center">
+                <p class="text-sm text-gray-500">
+                    이미 가입하셨나요? 
+                    <a href="login.html" class="font-medium text-[#1a73e8] hover:text-[#1557b0] hover:underline ml-1 transition-colors">로그인</a>
+                </p>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-transparent mt-auto py-6">
+        <div class="text-center text-[13px] text-gray-500">
+            © 2026 대영고등학교 | Developed by 이순옥
+        </div>
+    </footer>
+
+    <script>
+        function updatePlaceholders() {
+            const role = document.querySelector('input[name="role"]:checked').value;
+            const idLabel = document.getElementById('id-label');
+            const idInput = document.getElementById('userId');
+            
+            if (role === 'student') {
+                idLabel.innerText = '학번';
+                idInput.placeholder = '예) 10101';
+            } else {
+                idLabel.innerText = '교직원 ID';
+                idInput.placeholder = '교직원 ID를 입력해 주세요';
+            }
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            
+            const pwd = document.getElementById('password').value;
+            const pwdConfirm = document.getElementById('passwordConfirm').value;
+            
+            if (pwd !== pwdConfirm) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            
+            alert('회원가입이 완료되었습니다. 로그인 화면으로 이동합니다.');
+            location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
