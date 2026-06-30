@@ -92,8 +92,9 @@ const LoginPage: React.FC = () => {
         {tab === 'login' ? (
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">학번 또는 교번</label>
-              <input type="text" required value={loginId} onChange={e => setLoginId(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" placeholder="예: 10101" />
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">아이디</label>
+              <input type="text" required value={loginId} onChange={e => setLoginId(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
+              <p className="text-[12px] text-gray-500 mt-1.5 ml-1 text-left">학생은 학번, 교사는 교번을 입력하세요.</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">비밀번호</label>
@@ -106,8 +107,9 @@ const LoginPage: React.FC = () => {
         ) : (
           <form onSubmit={handleVerify} className="flex flex-col gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">학번 또는 교번</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">아이디</label>
               <input type="text" required value={verifyId} onChange={e => setVerifyId(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
+              <p className="text-[12px] text-gray-500 mt-1.5 ml-1 text-left">학생은 학번, 교사는 교번을 입력하세요.</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">이름</label>
