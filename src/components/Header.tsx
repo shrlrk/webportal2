@@ -12,6 +12,21 @@ const Header: React.FC = () => {
             </h1>
           </div>
         </div>
+        {/* Right Icons Area */}
+        <nav className="flex items-center gap-5 sm:gap-6">
+          <button className="flex items-center justify-center text-blue-500 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-full transition-all" title="홈">
+            <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>add</span>
+          </button>
+          <button className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" title="알림">
+            <span className="material-symbols-outlined text-[26px]">notifications</span>
+          </button>
+          <button className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" title="즐겨찾기">
+            <span className="material-symbols-outlined text-[26px]">star</span>
+          </button>
+          <button className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" title="내정보">
+            <span className="material-symbols-outlined text-[26px]">person</span>
+          </button>
+        </nav>
       </div>
     </header>
   );
