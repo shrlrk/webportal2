@@ -78,7 +78,7 @@ const BoardPage: React.FC = () => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">게시판 (RBAC 테스트)</h2>
+        <h2 className="text-2xl font-bold text-gray-800">게시판</h2>
         
         {/* 권한에 따른 글쓰기 버튼 표시 여부 */}
         {writeAllowed && (

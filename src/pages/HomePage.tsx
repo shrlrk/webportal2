@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
   const menus = [
-    { id: 1, title: '교과 (RBAC)', icon: 'menu_book', path: '/board' },
+    { id: 1, title: '교과', icon: 'menu_book', path: '/board' },
     { id: 2, title: '학년', icon: 'groups', path: '/board' },
     { id: 3, title: '진로', icon: 'explore', path: '/board' },
     { id: 4, title: '학생지원', icon: 'school', path: '/board' }
