@@ -136,12 +136,12 @@
                 <!-- Favorites -->
                 <div class="relative flex items-center">
                     <button class="text-gray-500 hover:text-gray-800 transition-all duration-300 hover:scale-110 flex items-center justify-center header-dropdown-btn" onclick="toggleDropdown('fav-dropdown')">
-                        <span class="material-symbols-outlined text-[28px]">star</span>
+                        <span class="material-symbols-outlined text-[28px] font-light">star</span>
                     </button>
                     <!-- Favorites Dropdown -->
-                    <div id="fav-dropdown" class="absolute right-0 top-full mt-4 w-64 bg-white rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] border border-gray-100 hidden flex-col overflow-hidden z-50 header-dropdown-menu">
+                    <div id="fav-dropdown" class="absolute right-0 top-full mt-4 w-[280px] bg-white rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] border border-gray-100 hidden flex-col overflow-hidden z-50 header-dropdown-menu">
                         <div class="px-4 py-3 border-b border-gray-50 bg-gray-50/50">
-                            <span class="text-sm font-semibold text-gray-700">즐겨찾기</span>
+                            <span class="text-sm font-semibold text-gray-700">⭐ 즐겨찾기</span>
                         </div>
                         <div id="fav-list" class="flex flex-col max-h-60 overflow-y-auto py-1">
                             <div class="px-4 py-8 text-center text-sm text-gray-400">등록된 즐겨찾기가 없습니다.</div>
@@ -485,9 +485,19 @@
             }
         }
 
-        // Close dropdowns on outside click
+        // Close dropdowns on outside click or touch
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.header-dropdown-btn') && !e.target.closest('.header-dropdown-menu')) {
+                ['fav-dropdown', 'profile-dropdown'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.classList.add('hidden');
+                });
+            }
+        });
+
+        // Close dropdowns on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
                 ['fav-dropdown', 'profile-dropdown'].forEach(id => {
                     const el = document.getElementById(id);
                     if(el) el.classList.add('hidden');
