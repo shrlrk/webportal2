@@ -185,7 +185,7 @@ const LoginPage: React.FC = () => {
                   tabIndex={-1}
                   aria-label={showLoginPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                 >
-                  <span className="material-symbols-outlined text-[20px]">{showLoginPassword ? 'visibility_off' : 'visibility'}</span>
+                  <span className="material-symbols-outlined text-[20px]">{showLoginPassword ? 'visibility' : 'visibility_off'}</span>
                 </button>
               </div>
             </div>
