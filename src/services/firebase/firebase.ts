@@ -13,6 +13,8 @@ const firebaseConfig = {
 
 export const app = (() => {
   try {
+    console.log('Firebase API Key 확인:', import.meta.env.VITE_FIREBASE_API_KEY);
+    
     if (!firebaseConfig.apiKey) throw new Error("Missing API Key");
     const a = initializeApp(firebaseConfig);
     console.log('✅ Firebase Connected');
