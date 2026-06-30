@@ -34,12 +34,14 @@ export const getUserDataByUid = async (uid: string): Promise<UserData | null> =>
   return snapshot.docs[0].data() as UserData;
 };
 
-export const updateUserUidAndPasswordSet = async (docId: string, uid: string) => {
+export const completeUserVerification = async (docId: string, uid: string) => {
   if (!db) return;
   const userRef = doc(db, 'users', docId); // docId is now internalId
   await updateDoc(userRef, {
     uid,
-    passwordSet: true
+    passwordSet: true,
+    isActive: true,
+    oneTimeCode: ""
   });
 };
 

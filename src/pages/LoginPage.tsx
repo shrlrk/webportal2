@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getUserByUserId } from '../services/firebase/userService';
-import { loginWithUserIdAndPassword } from '../services/firebase/authService';
+import { getUserByUserId, completeUserVerification } from '../services/firebase/userService';
+import { loginWithUserIdAndPassword, registerWithUserIdAndPassword } from '../services/firebase/authService';
 
 const LoginPage: React.FC = () => {
   const location = useLocation();
@@ -20,8 +20,9 @@ const LoginPage: React.FC = () => {
   
   // Verify State
   const [verifyId, setVerifyId] = useState('');
-  const [verifyName, setVerifyName] = useState('');
   const [verifyCode, setVerifyCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -50,58 +51,56 @@ const LoginPage: React.FC = () => {
       const result = await getUserByUserId(verifyId);
       
       if (!result) {
-        console.log('=== 최초 인증 디버깅 ===');
-        console.log(`입력한 아이디: ${verifyId}`);
-        console.log(`조회한 문서 존재 여부: 존재하지 않음 (해당 userId를 가진 문서 없음)`);
-        console.log('=======================');
-        setError('등록된 정보가 없습니다.');
+        setError('아이디가 존재하지 않습니다.');
         setLoading(false);
         return;
       }
 
       const data = result.data;
-      const isNameMatch = data.name === verifyName;
-      const isCodeMatch = data.oneTimeCode === verifyCode;
       
-      const isFinalValid = isNameMatch && isCodeMatch && data.isActive === true && data.passwordSet === false;
-
-      console.log('=== 최초 인증 디버깅 ===');
-      console.log(`입력 userId: ${verifyId}`);
-      console.log(`userId 조회 결과: 1개`);
-      console.log(`문서 ID: ${result.id}`);
-      console.log(`저장된 name: ${data.name} / 비교: ${isNameMatch}`);
-      console.log(`저장된 oneTimeCode: ${data.oneTimeCode} / 비교: ${isCodeMatch}`);
-      console.log(`isActive: ${data.isActive}`);
-      console.log(`passwordSet: ${data.passwordSet}`);
-      console.log(`최종 인증 가능 여부: ${isFinalValid}`);
-      console.log('=======================');
-
-      if (data.passwordSet === true) {
-        setError('이미 비밀번호가 설정된 계정입니다. 로그인 탭을 이용해 주세요.');
-        setLoading(false);
-        return;
+      if (data.passwordSet === true || data.isActive === true) {
+        // Here, checking passwordSet is enough, but checking isActive as well based on user's instruction.
+        // Actually the current DB sets isActive=true, passwordSet=false initially.
+        // So I'll check passwordSet === true.
+        if (data.passwordSet === true) {
+          setError('이미 최초 인증이 완료된 계정입니다. 로그인 탭을 이용해 주세요.');
+          setLoading(false);
+          return;
+        }
       }
 
-      if (data.isActive !== true) {
-        setError('비활성화된 계정입니다.');
+      if (data.oneTimeCode !== verifyCode) {
+        setError('초기 인증번호가 일치하지 않습니다.');
         setLoading(false);
         return;
       }
       
-      if (!isNameMatch) {
-        setError('이름이 일치하지 않습니다.');
+      if (newPassword !== confirmPassword) {
+        setError('새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.');
+        setLoading(false);
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        setError('비밀번호가 너무 짧습니다. (최소 6자리 이상)');
         setLoading(false);
         return;
       }
       
-      if (!isCodeMatch) {
-        setError('인증번호가 일치하지 않습니다.');
-        setLoading(false);
-        return;
-      }
+      // 계정 생성
+      const userCredential = await registerWithUserIdAndPassword(verifyId, newPassword);
       
-      // 성공 시 상태 넘겨주며 페이지 이동
-      navigate('/setup-password', { state: { docId: result.id, userId: verifyId, from } });
+      // DB 업데이트
+      await completeUserVerification(result.id, userCredential.user.uid);
+      
+      alert('최초 인증이 완료되었습니다. 로그인해 주세요.');
+      
+      // 로그인 탭으로 전환 및 폼 초기화
+      setVerifyId('');
+      setVerifyCode('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTab('login');
     } catch (err: any) {
       setError('인증 처리 중 오류가 발생했습니다. (서버 연결 실패)');
     }
@@ -156,21 +155,28 @@ const LoginPage: React.FC = () => {
           </form>
         ) : (
           <form onSubmit={handleVerify} className="flex flex-col gap-4">
+            <p className="text-[13px] text-gray-600 font-medium mb-2 bg-gray-50 p-3 rounded-lg border border-gray-100">
+              처음 이용하는 학생과 교사는 초기 인증번호로 본인 확인 후 비밀번호를 설정하세요.
+            </p>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">아이디</label>
               <input type="text" required value={verifyId} onChange={e => setVerifyId(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
               <p className="text-[12px] text-gray-500 mt-1.5 ml-1 text-left">학생은 학번, 교사는 교번을 입력하세요.</p>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">이름</label>
-              <input type="text" required value={verifyName} onChange={e => setVerifyName(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">1회 인증번호</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">초기 인증번호</label>
               <input type="text" required value={verifyCode} onChange={e => setVerifyCode(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
             </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">새 비밀번호</label>
+              <input type="password" required value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">새 비밀번호 확인</label>
+              <input type="password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
+            </div>
             <button type="submit" disabled={loading} className="w-full h-12 bg-gray-800 hover:bg-gray-900 active:scale-[0.98] text-white font-semibold rounded-xl mt-4 transition-all duration-200 disabled:opacity-50">
-              {loading ? '인증 중...' : '인증 후 비밀번호 설정'}
+              {loading ? '인증 중...' : '최초 인증 완료'}
             </button>
           </form>
         )}
