@@ -7,59 +7,63 @@ export const getUserByUserId = async (userId: string): Promise<{ id: string; dat
   if (!db) return null;
   
   const searchUserId = String(userId).trim();
-  console.log(`[userService] getUserByUserId 호출됨. 검색할 userId: "${searchUserId}" (타입: ${typeof searchUserId})`);
+  console.log(`[userService] [STEP 0] getUserByUserId 호출됨. 검색할 userId: "${searchUserId}"`);
   
   const usersRef = collection(db, 'users');
   
   // 1. 문자열로 먼저 조회
-  const qStr = query(usersRef, where('userId', '==', searchUserId));
-  const snapshotStr = await getDocs(qStr);
-  
-  if (!snapshotStr.empty) {
-    console.log(`[userService] 문자열 조회 성공`);
-    const docSnap = snapshotStr.docs[0];
-    return { id: docSnap.id, data: docSnap.data() as UserData };
-  }
-  
-  // 2. 숫자로도 조회 시도 (Firestore에 숫자로 저장된 기존 계정 대응)
-  if (!isNaN(Number(searchUserId))) {
-    const qNum = query(usersRef, where('userId', '==', Number(searchUserId)));
-    const snapshotNum = await getDocs(qNum);
-    
-    if (!snapshotNum.empty) {
-      console.log(`[userService] 숫자 조회 성공`);
-      const docSnap = snapshotNum.docs[0];
-      return { id: docSnap.id, data: docSnap.data() as UserData };
+  try {
+    const qStr = query(usersRef, where('userId', '==', searchUserId));
+    const snapshotStr = await getDocs(qStr);
+    console.log(`[userService] [STEP 1] 문자열 조회 결과 (userId === "${searchUserId}"): ${snapshotStr.size}건`);
+    if (!snapshotStr.empty) {
+      return { id: snapshotStr.docs[0].id, data: snapshotStr.docs[0].data() as UserData };
     }
-  }
+  } catch (err) { console.error('[STEP 1 Error]', err); }
+  
+  // 2. 숫자로도 조회 시도
+  try {
+    if (!isNaN(Number(searchUserId))) {
+      const qNum = query(usersRef, where('userId', '==', Number(searchUserId)));
+      const snapshotNum = await getDocs(qNum);
+      console.log(`[userService] [STEP 2] 숫자 조회 결과 (userId === ${Number(searchUserId)}): ${snapshotNum.size}건`);
+      if (!snapshotNum.empty) {
+        return { id: snapshotNum.docs[0].id, data: snapshotNum.docs[0].data() as UserData };
+      }
+    }
+  } catch (err) { console.error('[STEP 2 Error]', err); }
 
-  // 3. internalId 필드로 조회 (교번 등)
-  const qInternal = query(usersRef, where('internalId', '==', searchUserId));
-  const snapshotInternal = await getDocs(qInternal);
-  if (!snapshotInternal.empty) {
-    console.log(`[userService] internalId 필드 조회 성공`);
-    const docSnap = snapshotInternal.docs[0];
-    return { id: docSnap.id, data: docSnap.data() as UserData };
-  }
+  // 3. internalId 필드로 조회
+  try {
+    const qInternal = query(usersRef, where('internalId', '==', searchUserId));
+    const snapshotInternal = await getDocs(qInternal);
+    console.log(`[userService] [STEP 3] internalId 조회 결과: ${snapshotInternal.size}건`);
+    if (!snapshotInternal.empty) {
+      return { id: snapshotInternal.docs[0].id, data: snapshotInternal.docs[0].data() as UserData };
+    }
+  } catch (err) { console.error('[STEP 3 Error]', err); }
 
   // 4. 문서 ID로 직접 조회
-  const docRef = doc(db, 'users', searchUserId);
-  const directDocSnap = await getDoc(docRef);
-  if (directDocSnap.exists()) {
-    console.log(`[userService] 문서 ID 조회 성공`);
-    return { id: directDocSnap.id, data: directDocSnap.data() as UserData };
-  }
+  try {
+    const docRef = doc(db, 'users', searchUserId);
+    const directDocSnap = await getDoc(docRef);
+    console.log(`[userService] [STEP 4] 문서 ID 직접 조회 결과: exists=${directDocSnap.exists()}`);
+    if (directDocSnap.exists()) {
+      return { id: directDocSnap.id, data: directDocSnap.data() as UserData };
+    }
+  } catch (err) { console.error('[STEP 4 Error]', err); }
 
-  // 5. previousUserIds 배열 내에서 검색 (과거 아이디로 조회 시도 시)
-  const qPrev = query(usersRef, where('previousUserIds', 'array-contains', searchUserId));
-  const snapshotPrev = await getDocs(qPrev);
-  if (!snapshotPrev.empty) {
-    console.log(`[userService] previousUserIds 배열 조회 성공`);
-    const docSnap = snapshotPrev.docs[0];
-    return { id: docSnap.id, data: docSnap.data() as UserData };
-  }
+  // 5. previousUserIds 배열 내에서 검색
+  try {
+    const qPrev = query(usersRef, where('previousUserIds', 'array-contains', searchUserId));
+    const snapshotPrev = await getDocs(qPrev);
+    console.log(`[userService] [STEP 5] previousUserIds 조회 결과: ${snapshotPrev.size}건`);
+    if (!snapshotPrev.empty) {
+      return { id: snapshotPrev.docs[0].id, data: snapshotPrev.docs[0].data() as UserData };
+    }
+  } catch (err) { console.error('[STEP 5 Error]', err); }
   
-  console.log(`[userService] 계정을 찾을 수 없습니다. (${searchUserId})`);
+  console.log(`[userService] [STEP 6] 모든 조회 실패. null 반환`);
   return null;
 };
 
