@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import PasswordSetupPage from './pages/PasswordSetupPage';
+import BoardPage from './pages/BoardPage';
 import { useAuth } from './contexts/AuthContext';
 
 const App: React.FC = () => {
@@ -22,7 +23,10 @@ const App: React.FC = () => {
       <Route path="/" element={
         currentUser ? (
           <Layout>
-            <HomePage />
+            <Routes>
+              <Route index element={<HomePage />} />
+              <Route path="board" element={<BoardPage />} />
+            </Routes>
           </Layout>
         ) : (
           <Navigate to="/login" />

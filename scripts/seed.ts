@@ -1,5 +1,5 @@
 import { db } from '../src/services/firebase/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -19,12 +19,15 @@ const seedUsers = async () => {
     
     let successCount = 0;
     
+    if (!db) {
+      throw new Error("Firestore DB is not initialized.");
+    }
+    
     for (const line of lines) {
-      // 10101,가학생,S,student,A001,TRUE,FALSE
       const parts = line.split(',').map(s => s.trim());
-      if (parts.length < 7) continue;
+      if (parts.length < 8) continue; // internalId, userId, name, userType, role, oneTimeCode, isActive, passwordSet
 
-      const [userId, name, userType, role, oneTimeCode, isActiveStr, passwordSetStr] = parts;
+      const [internalId, userId, name, userType, role, oneTimeCode, isActiveStr, passwordSetStr] = parts;
       
       const isActive = isActiveStr?.toUpperCase() === 'TRUE';
       const passwordSet = passwordSetStr?.toUpperCase() === 'TRUE';
@@ -36,28 +39,44 @@ const seedUsers = async () => {
         studentNumber = parseInt(userId.substring(3, 5), 10);
       }
       
-      if (!db) {
-        throw new Error("Firestore DB is not initialized.");
+      const userRef = doc(db, 'users', String(internalId));
+      const existingSnap = await getDoc(userRef);
+      
+      let previousUserIds: string[] = [];
+      let createdAt = new Date();
+      
+      if (existingSnap.exists()) {
+        const existingData = existingSnap.data();
+        createdAt = existingData.createdAt?.toDate ? existingData.createdAt.toDate() : new Date();
+        previousUserIds = existingData.previousUserIds || [];
+        
+        if (existingData.userId && existingData.userId !== userId) {
+          if (!previousUserIds.includes(existingData.userId)) {
+            previousUserIds.push(existingData.userId);
+          }
+        }
       }
 
-      const userRef = doc(db, 'users', userId);
       const userData = {
-        userId,
+        internalId: String(internalId),
+        userId: String(userId),
         name,
         userType,
         role,
-        oneTimeCode,
+        oneTimeCode: String(oneTimeCode),
         isActive,
         passwordSet,
+        previousUserIds,
+        schoolYear: "2026",
         ...(grade !== null && !isNaN(grade) && { grade }),
         ...(classNumber !== null && !isNaN(classNumber) && { classNumber }),
         ...(studentNumber !== null && !isNaN(studentNumber) && { studentNumber }),
-        createdAt: new Date(),
+        createdAt,
         updatedAt: new Date()
       };
       
       await setDoc(userRef, userData, { merge: true });
-      console.log(`[OK] User ${userId} (${name}) uploaded/updated successfully.`);
+      console.log(`[OK] User ${internalId} (userId: ${userId}, name: ${name}) uploaded/updated successfully.`);
       successCount++;
     }
     

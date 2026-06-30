@@ -42,7 +42,7 @@ const LoginPage: React.FC = () => {
       if (!result) {
         console.log('=== 최초 인증 디버깅 ===');
         console.log(`입력한 아이디: ${verifyId}`);
-        console.log(`조회한 문서 존재 여부: 존재하지 않음 (Firestore users/${verifyId} 없음)`);
+        console.log(`조회한 문서 존재 여부: 존재하지 않음 (해당 userId를 가진 문서 없음)`);
         console.log('=======================');
         setError('등록된 정보가 없습니다.');
         setLoading(false);

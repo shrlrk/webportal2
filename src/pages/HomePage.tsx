@@ -1,12 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
   const menus = [
-    { id: 1, title: '교과', icon: 'menu_book' },
-    { id: 2, title: '학년', icon: 'groups' },
-    { id: 3, title: '진로', icon: 'explore' },
-    { id: 4, title: '학생지원', icon: 'school' }
+    { id: 1, title: '교과 (RBAC)', icon: 'menu_book', path: '/board' },
+    { id: 2, title: '학년', icon: 'groups', path: '/board' },
+    { id: 3, title: '진로', icon: 'explore', path: '/board' },
+    { id: 4, title: '학생지원', icon: 'school', path: '/board' }
   ];
+
+  const navigate = useNavigate();
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12 flex flex-col items-center flex-grow">
@@ -32,6 +35,7 @@ const HomePage: React.FC = () => {
         {menus.map((menu) => (
           <button
             key={menu.id}
+            onClick={() => navigate(menu.path)}
             className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-6 md:p-8 hover:shadow-md hover:border-gray-300 transition-all duration-300 group"
           >
             <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-gray-50 border border-gray-100 transition-transform duration-300 group-hover:scale-110">
