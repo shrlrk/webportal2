@@ -144,11 +144,11 @@ const BoardPage: React.FC = () => {
                   <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                     {post.title}
                     <span 
-                      onClick={() => handleToggleFavorite(post.id)}
+                      onClick={() => post.id && handleToggleFavorite(post.id)}
                       className="cursor-pointer text-yellow-400 select-none hover:scale-110 transition-transform"
                       title="즐겨찾기 토글"
                     >
-                      {favorites.has(post.id) ? '★' : '☆'}
+                      {post.id && favorites.has(post.id) ? '★' : '☆'}
                     </span>
                   </h3>
                   <div className="text-sm text-gray-500 mt-1 flex items-center gap-2">

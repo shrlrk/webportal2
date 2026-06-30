@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, query, where, getDocs, doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { UserData } from '../../types';
 
 // 아이디(userId) 기반으로 사용자 조회 (문서 ID가 internalId로 변경됨)
@@ -10,18 +10,31 @@ export const getUserByUserId = async (userId: string): Promise<{ id: string; dat
   console.log(`[userService] getUserByUserId 호출됨. 검색할 userId: "${searchUserId}" (타입: ${typeof searchUserId})`);
   
   const usersRef = collection(db, 'users');
-  const q = query(usersRef, where('userId', '==', searchUserId));
-  const snapshot = await getDocs(q);
   
-  console.log(`[userService] Firestore 조회 직후 snapshot.size: ${snapshot.size}`);
+  // 1. 문자열로 먼저 조회
+  const qStr = query(usersRef, where('userId', '==', searchUserId));
+  const snapshotStr = await getDocs(qStr);
   
-  if (snapshot.empty) {
-    console.log(`[userService] snapshot이 0건입니다. 조회 조건: where("userId", "==", "${searchUserId}")`);
-    return null;
+  if (!snapshotStr.empty) {
+    console.log(`[userService] 문자열 조회 성공`);
+    const docSnap = snapshotStr.docs[0];
+    return { id: docSnap.id, data: docSnap.data() as UserData };
   }
   
-  const docSnap = snapshot.docs[0];
-  return { id: docSnap.id, data: docSnap.data() as UserData };
+  // 2. 숫자로도 조회 시도 (Firestore에 숫자로 저장된 기존 계정 대응)
+  if (!isNaN(Number(searchUserId))) {
+    const qNum = query(usersRef, where('userId', '==', Number(searchUserId)));
+    const snapshotNum = await getDocs(qNum);
+    
+    if (!snapshotNum.empty) {
+      console.log(`[userService] 숫자 조회 성공`);
+      const docSnap = snapshotNum.docs[0];
+      return { id: docSnap.id, data: docSnap.data() as UserData };
+    }
+  }
+  
+  console.log(`[userService] 계정을 찾을 수 없습니다. (${searchUserId})`);
+  return null;
 };
 
 export const getUserDataByUid = async (uid: string): Promise<UserData | null> => {

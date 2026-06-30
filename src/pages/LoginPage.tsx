@@ -199,7 +199,7 @@ const LoginPage: React.FC = () => {
         ) : alreadyVerified ? (
           <div className="flex flex-col gap-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">최초 인증</h2>
-            <div className="text-[13px] text-gray-600 text-center bg-gray-50 py-3 px-4 rounded-xl font-medium whitespace-pre-wrap leading-relaxed mb-2">
+            <div className="text-[13px] text-gray-600 text-left bg-gray-50 py-3 px-4 rounded-xl font-medium whitespace-pre-wrap leading-relaxed mb-2">
               이미 최초 인증이 완료된 계정입니다.<br/>로그인으로 이용해 주세요.
             </div>
             <button type="button" onClick={() => { setTab('login'); setAlreadyVerified(false); setError(''); }} className="w-full h-12 bg-blue-500 hover:bg-blue-600 active:scale-[0.98] text-white font-semibold rounded-xl transition-all duration-200">
