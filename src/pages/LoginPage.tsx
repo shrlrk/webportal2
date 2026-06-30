@@ -3,6 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getUserByUserId, completeUserVerification } from '../services/firebase/userService';
 import { loginWithUserIdAndPassword, registerWithUserIdAndPassword } from '../services/firebase/authService';
 
+const SYSTEM_SETTINGS_PLACEHOLDER = {
+  loginHelp: {
+    title: "비밀번호를 잊으셨나요?",
+    message: "학교생활+ 관리자에게 문의하세요."
+  }
+};
+
 const LoginPage: React.FC = () => {
   const location = useLocation();
   const initialTab = location.state?.tab === 'verify' ? 'verify' : 'login';
@@ -41,7 +48,7 @@ const LoginPage: React.FC = () => {
       await loginWithUserIdAndPassword(loginId, loginPassword);
       navigate(from, { replace: true });
     } catch (err: any) {
-      setError('아이디 또는 비밀번호를 확인해 주세요.\n로그인이 계속되지 않으면 담임교사 또는 도서관 담당자에게 문의하세요.');
+      setError('아이디 또는 비밀번호를 다시 확인해 주세요.');
     }
     setLoading(false);
   };
@@ -139,7 +146,9 @@ const LoginPage: React.FC = () => {
 
 
         {error && (
-          <div className="mb-6 text-[13px] text-red-500 text-center bg-red-50 py-3 px-4 rounded-xl font-medium whitespace-pre-wrap leading-relaxed">
+          <div className={`mb-6 text-[13px] py-3 px-4 rounded-xl font-medium whitespace-pre-wrap leading-relaxed ${
+            tab === 'login' ? 'bg-gray-50 text-gray-600 text-left' : 'bg-red-50 text-red-500 text-center'
+          }`}>
             {error}
           </div>
         )}
@@ -159,6 +168,10 @@ const LoginPage: React.FC = () => {
             <button type="submit" disabled={loading} className="w-full h-12 bg-blue-500 hover:bg-blue-600 active:scale-[0.98] text-white font-semibold rounded-xl mt-4 transition-all duration-200 disabled:opacity-50">
               {loading ? '로그인 중...' : '로그인'}
             </button>
+            <div className="mt-2 text-[12px] text-gray-500 text-left">
+              <p className="font-medium text-gray-600 mb-0.5">{SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.title}</p>
+              <p>{SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.message}</p>
+            </div>
             <div className="mt-4 text-center text-[13px] text-gray-600">
               처음 이용하시나요? <button type="button" onClick={() => { setTab('verify'); setError(''); setVerifyStep(1); setAlreadyVerified(false); }} className="text-blue-500 font-semibold hover:underline ml-1">최초 인증하기</button>
             </div>
