@@ -49,6 +49,15 @@ export const getUserByUserId = async (userId: string): Promise<{ id: string; dat
     console.log(`[userService] 문서 ID 조회 성공`);
     return { id: directDocSnap.id, data: directDocSnap.data() as UserData };
   }
+
+  // 5. previousUserIds 배열 내에서 검색 (과거 아이디로 조회 시도 시)
+  const qPrev = query(usersRef, where('previousUserIds', 'array-contains', searchUserId));
+  const snapshotPrev = await getDocs(qPrev);
+  if (!snapshotPrev.empty) {
+    console.log(`[userService] previousUserIds 배열 조회 성공`);
+    const docSnap = snapshotPrev.docs[0];
+    return { id: docSnap.id, data: docSnap.data() as UserData };
+  }
   
   console.log(`[userService] 계정을 찾을 수 없습니다. (${searchUserId})`);
   return null;
