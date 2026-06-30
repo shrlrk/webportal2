@@ -68,6 +68,12 @@ const LoginPage: React.FC = () => {
       console.log(`최종 인증 가능 여부: ${isFinalValid}`);
       console.log('=======================');
 
+      if (data.passwordSet === true) {
+        setError('이미 비밀번호가 설정된 계정입니다. 로그인 탭을 이용해 주세요.');
+        setLoading(false);
+        return;
+      }
+
       if (data.isActive !== true) {
         setError('비활성화된 계정입니다.');
         setLoading(false);
@@ -82,12 +88,6 @@ const LoginPage: React.FC = () => {
       
       if (!isCodeMatch) {
         setError('인증번호가 일치하지 않습니다.');
-        setLoading(false);
-        return;
-      }
-      
-      if (data.passwordSet === true) {
-        setError('이미 비밀번호가 설정된 계정입니다. 로그인 탭을 이용해 주세요.');
         setLoading(false);
         return;
       }

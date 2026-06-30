@@ -5,11 +5,21 @@ import { UserData } from '../../types';
 // 아이디(userId) 기반으로 사용자 조회 (문서 ID가 internalId로 변경됨)
 export const getUserByUserId = async (userId: string): Promise<{ id: string; data: UserData } | null> => {
   if (!db) return null;
+  
+  const searchUserId = String(userId).trim();
+  console.log(`[userService] getUserByUserId 호출됨. 검색할 userId: "${searchUserId}" (타입: ${typeof searchUserId})`);
+  
   const usersRef = collection(db, 'users');
-  const q = query(usersRef, where('userId', '==', String(userId)));
+  const q = query(usersRef, where('userId', '==', searchUserId));
   const snapshot = await getDocs(q);
   
-  if (snapshot.empty) return null;
+  console.log(`[userService] Firestore 조회 직후 snapshot.size: ${snapshot.size}`);
+  
+  if (snapshot.empty) {
+    console.log(`[userService] snapshot이 0건입니다. 조회 조건: where("userId", "==", "${searchUserId}")`);
+    return null;
+  }
+  
   const docSnap = snapshot.docs[0];
   return { id: docSnap.id, data: docSnap.data() as UserData };
 };
