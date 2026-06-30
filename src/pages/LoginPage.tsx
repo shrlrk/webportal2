@@ -117,20 +117,7 @@ const LoginPage: React.FC = () => {
           </h1>
         </div>
 
-        <div className="flex mb-8 border-b border-gray-200">
-          <button 
-            className={`flex-1 pb-3 text-center font-semibold text-sm transition-colors ${tab === 'login' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-gray-600'}`}
-            onClick={() => { setTab('login'); setError(''); }}
-          >
-            로그인
-          </button>
-          <button 
-            className={`flex-1 pb-3 text-center font-semibold text-sm transition-colors ${tab === 'verify' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-gray-600'}`}
-            onClick={() => { setTab('verify'); setError(''); }}
-          >
-            최초 인증
-          </button>
-        </div>
+
 
         {error && (
           <div className="mb-6 text-[13px] text-red-500 text-center bg-red-50 py-3 px-4 rounded-xl font-medium whitespace-pre-wrap leading-relaxed">
@@ -140,6 +127,7 @@ const LoginPage: React.FC = () => {
 
         {tab === 'login' ? (
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
+            <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">로그인</h2>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">아이디</label>
               <input type="text" required value={loginId} onChange={e => setLoginId(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
@@ -152,9 +140,13 @@ const LoginPage: React.FC = () => {
             <button type="submit" disabled={loading} className="w-full h-12 bg-blue-500 hover:bg-blue-600 active:scale-[0.98] text-white font-semibold rounded-xl mt-4 transition-all duration-200 disabled:opacity-50">
               {loading ? '로그인 중...' : '로그인'}
             </button>
+            <div className="mt-4 text-center text-[13px] text-gray-600">
+              처음 이용하시나요? <button type="button" onClick={() => { setTab('verify'); setError(''); }} className="text-blue-500 font-semibold hover:underline ml-1">최초 인증하기</button>
+            </div>
           </form>
         ) : (
           <form onSubmit={handleVerify} className="flex flex-col gap-4">
+            <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">최초 인증</h2>
             <p className="text-[13px] text-gray-600 font-medium mb-2 bg-gray-50 p-3 rounded-lg border border-gray-100">
               처음 이용하는 학생과 교사는 초기 인증번호로 본인 확인 후 비밀번호를 설정하세요.
             </p>
@@ -178,6 +170,9 @@ const LoginPage: React.FC = () => {
             <button type="submit" disabled={loading} className="w-full h-12 bg-gray-800 hover:bg-gray-900 active:scale-[0.98] text-white font-semibold rounded-xl mt-4 transition-all duration-200 disabled:opacity-50">
               {loading ? '인증 중...' : '최초 인증 완료'}
             </button>
+            <div className="mt-4 text-center text-[13px] text-gray-600">
+              이미 인증을 완료했나요? <button type="button" onClick={() => { setTab('login'); setError(''); }} className="text-blue-500 font-semibold hover:underline ml-1">로그인으로 돌아가기</button>
+            </div>
           </form>
         )}
       </div>

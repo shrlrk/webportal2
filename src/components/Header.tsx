@@ -80,7 +80,6 @@ const Header: React.FC = () => {
                 {!currentUser ? (
                   <>
                     <button onClick={() => handleMenuClick(() => navigate('/login', { state: { tab: 'login' } }))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">로그인</button>
-                    <button onClick={() => handleMenuClick(() => navigate('/login', { state: { tab: 'verify' } }))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">최초 인증</button>
                   </>
                 ) : (
                   <>
