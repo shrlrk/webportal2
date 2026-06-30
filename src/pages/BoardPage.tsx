@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { canWritePost, canEditOrDeletePost } from '../services/firebase/userService';
+import { toggleFavorite, getUserFavorites } from '../services/firebase/favoriteService';
 import { PostData } from '../types';
+import { useEffect } from 'react';
 
 // 임시 게시글 데이터
 const DUMMY_POSTS: PostData[] = [
@@ -35,8 +37,19 @@ const DUMMY_POSTS: PostData[] = [
 const BoardPage: React.FC = () => {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState<PostData[]>(DUMMY_POSTS);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (currentUser?.internalId) {
+      getUserFavorites(currentUser.internalId).then((favIds) => {
+        setFavorites(new Set(favIds));
+      });
+    } else {
+      setFavorites(new Set());
+    }
+  }, [currentUser]);
 
   // 비로그인 사용자에게는 글쓰기 버튼을 보여주고 클릭 시 로그인으로 유도합니다.
   // 로그인 사용자 중 학생은 아예 버튼이 안보입니다.
@@ -75,6 +88,33 @@ const BoardPage: React.FC = () => {
     alert("새 게시글 작성 창으로 이동합니다.");
   };
 
+  const handleToggleFavorite = async (postId: string) => {
+    if (!currentUser) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+    const internalId = currentUser.internalId;
+    if (!internalId) return;
+
+    // Optimistic UI update
+    const newFavs = new Set(favorites);
+    const isAdding = !newFavs.has(postId);
+    if (isAdding) newFavs.add(postId);
+    else newFavs.delete(postId);
+    setFavorites(newFavs);
+
+    try {
+      await toggleFavorite(internalId, postId);
+    } catch (error) {
+      // Revert if error
+      const revertedFavs = new Set(favorites);
+      if (isAdding) revertedFavs.delete(postId);
+      else revertedFavs.add(postId);
+      setFavorites(revertedFavs);
+      alert("즐겨찾기 처리 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
       <div className="flex justify-between items-center mb-8">
@@ -101,7 +141,16 @@ const BoardPage: React.FC = () => {
             <div key={post.id} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-800">{post.title}</h3>
+                  <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    {post.title}
+                    <span 
+                      onClick={() => handleToggleFavorite(post.id)}
+                      className="cursor-pointer text-yellow-400 select-none hover:scale-110 transition-transform"
+                      title="즐겨찾기 토글"
+                    >
+                      {favorites.has(post.id) ? '★' : '☆'}
+                    </span>
+                  </h3>
                   <div className="text-sm text-gray-500 mt-1 flex items-center gap-2">
                     <span className="font-medium text-gray-700">{post.authorName}</span>
                     <span>•</span>

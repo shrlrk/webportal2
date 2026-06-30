@@ -54,6 +54,19 @@ export const canWritePost = (user: UserData | null): boolean => {
 // 게시글 수정/삭제 권한: 작성자 본인이거나 관리자(admin)
 export const canEditOrDeletePost = (user: UserData | null, postAuthorInternalId: string): boolean => {
   if (!user) return false;
-  if (user.role === 'admin') return true;
+  if (isAdmin(user)) return true;
   return user.internalId === postAuthorInternalId;
 };
+
+// 관리자 권한 확인 (사용자 관리, 게시글 통합 관리 등)
+export const isAdmin = (user: UserData | null): boolean => {
+  if (!user) return false;
+  return user.userType === 'T' && user.role === 'admin';
+};
+
+/* 
+  [학생 진급 시 유의사항 - 원칙]
+  학생이 다음 학년도에 진급하더라도 internalId(예: S000001)는 절대 변경하지 않습니다.
+  새 학번이 부여되면 userId만 변경(예: 10101 -> 20101)합니다.
+  즐겨찾기, 신청기록, 활동기록 등 모든 개인화된 데이터는 userId가 아닌 internalId를 기준으로 저장되어야 합니다.
+*/

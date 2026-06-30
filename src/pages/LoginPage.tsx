@@ -29,7 +29,7 @@ const LoginPage: React.FC = () => {
       await loginWithUserIdAndPassword(loginId, loginPassword);
       navigate(from, { replace: true });
     } catch (err: any) {
-      setError('학번/교번 또는 비밀번호가 올바르지 않습니다.');
+      setError('아이디 또는 비밀번호를 확인해 주세요.\n로그인이 계속되지 않으면 담임교사 또는 도서관 담당자에게 문의하세요.');
     }
     setLoading(false);
   };
@@ -125,7 +125,11 @@ const LoginPage: React.FC = () => {
           </button>
         </div>
 
-        {error && <div className="mb-6 text-[13px] text-red-500 text-center bg-red-50 py-3 rounded-xl font-medium">{error}</div>}
+        {error && (
+          <div className="mb-6 text-[13px] text-red-500 text-center bg-red-50 py-3 px-4 rounded-xl font-medium whitespace-pre-wrap leading-relaxed">
+            {error}
+          </div>
+        )}
 
         {tab === 'login' ? (
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
