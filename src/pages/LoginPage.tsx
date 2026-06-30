@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUserByUserIdAndName } from '../services/firebase/userService';
+import { getUserByUserId } from '../services/firebase/userService';
 import { loginWithUserIdAndPassword } from '../services/firebase/authService';
 
 const LoginPage: React.FC = () => {
@@ -37,18 +37,50 @@ const LoginPage: React.FC = () => {
     setError('');
     setLoading(true);
     try {
-      const result = await getUserByUserIdAndName(verifyId, verifyName);
+      const result = await getUserByUserId(verifyId);
+      
       if (!result) {
+        console.log('=== 최초 인증 디버깅 ===');
+        console.log(`입력한 아이디: ${verifyId}`);
+        console.log(`조회한 문서 존재 여부: 존재하지 않음 (Firestore users/${verifyId} 없음)`);
+        console.log('=======================');
         setError('등록된 정보가 없습니다.');
         setLoading(false);
         return;
       }
-      if (result.data.oneTimeCode !== verifyCode) {
+
+      const data = result.data;
+      const isNameMatch = data.name === verifyName;
+      const isCodeMatch = data.oneTimeCode === verifyCode;
+      
+      console.log('=== 최초 인증 디버깅 ===');
+      console.log(`입력한 아이디: ${verifyId}`);
+      console.log(`조회한 문서 존재 여부: 존재함`);
+      console.log(`입력한 이름: ${verifyName} | 저장된 이름: ${data.name} | 일치여부: ${isNameMatch}`);
+      console.log(`입력한 인증번호: ${verifyCode} | 저장된 인증번호: ${data.oneTimeCode} | 일치여부: ${isCodeMatch}`);
+      console.log(`isActive 상태: ${data.isActive} (기대값: true)`);
+      console.log(`passwordSet 상태: ${data.passwordSet} (기대값: false)`);
+      console.log('=======================');
+
+      if (data.isActive !== true) {
+        setError('비활성화된 계정입니다.');
+        setLoading(false);
+        return;
+      }
+      
+      if (!isNameMatch) {
+        setError('이름이 일치하지 않습니다.');
+        setLoading(false);
+        return;
+      }
+      
+      if (!isCodeMatch) {
         setError('인증번호가 일치하지 않습니다.');
         setLoading(false);
         return;
       }
-      if (result.data.passwordSet) {
+      
+      if (data.passwordSet === true) {
         setError('이미 비밀번호가 설정된 계정입니다. 로그인 탭을 이용해 주세요.');
         setLoading(false);
         return;
