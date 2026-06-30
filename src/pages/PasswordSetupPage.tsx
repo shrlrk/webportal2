@@ -17,7 +17,7 @@ const PasswordSetupPage: React.FC = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [error, setError] = useState('');
 
-  const state = location.state as { docId: string, userId: string };
+  const state = location.state as { docId: string, userId: string, from?: string };
 
   useEffect(() => {
     if (!state?.docId || !state?.userId) {
@@ -70,7 +70,7 @@ const PasswordSetupPage: React.FC = () => {
       setSuccessMsg('비밀번호가 설정되었습니다.');
       
       setTimeout(() => {
-        navigate('/login');
+        navigate('/login', { state: { from: state.from } });
       }, 1500);
       
     } catch (err: any) {

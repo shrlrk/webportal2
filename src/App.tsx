@@ -19,19 +19,11 @@ const App: React.FC = () => {
       <Route path="/login" element={currentUser ? <Navigate to="/" /> : <LoginPage />} />
       <Route path="/setup-password" element={currentUser ? <Navigate to="/" /> : <PasswordSetupPage />} />
       
-      {/* Protected Route */}
-      <Route path="/" element={
-        currentUser ? (
-          <Layout>
-            <Routes>
-              <Route index element={<HomePage />} />
-              <Route path="board" element={<BoardPage />} />
-            </Routes>
-          </Layout>
-        ) : (
-          <Navigate to="/login" />
-        )
-      } />
+      {/* Public Routes with Layout */}
+      <Route path="/" element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route path="board" element={<BoardPage />} />
+      </Route>
     </Routes>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { canWritePost, canEditOrDeletePost } from '../services/firebase/userService';
 import { PostData } from '../types';
@@ -34,8 +35,12 @@ const DUMMY_POSTS: PostData[] = [
 const BoardPage: React.FC = () => {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState<PostData[]>(DUMMY_POSTS);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const writeAllowed = canWritePost(currentUser);
+  // 비로그인 사용자에게는 글쓰기 버튼을 보여주고 클릭 시 로그인으로 유도합니다.
+  // 로그인 사용자 중 학생은 아예 버튼이 안보입니다.
+  const writeAllowed = currentUser ? canWritePost(currentUser) : true;
 
   const handleEdit = (post: PostData) => {
     if (!canEditOrDeletePost(currentUser, post.authorId)) {
@@ -58,7 +63,12 @@ const BoardPage: React.FC = () => {
   };
 
   const handleWrite = () => {
-    if (!writeAllowed) {
+    if (!currentUser) {
+      // 비로그인 시 로그인 화면으로 리다이렉트 (이후 다시 복귀)
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+    if (!canWritePost(currentUser)) {
       alert("작성 권한이 없습니다.");
       return;
     }
@@ -84,7 +94,8 @@ const BoardPage: React.FC = () => {
 
       <div className="flex flex-col gap-4">
         {posts.map(post => {
-          const editOrDeleteAllowed = canEditOrDeletePost(currentUser, post.authorId);
+          // 작성된 글에 대한 수정/삭제는 로그인 사용자에게만 보이도록 함
+          const editOrDeleteAllowed = currentUser ? canEditOrDeletePost(currentUser, post.authorId) : false;
           
           return (
             <div key={post.id} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">

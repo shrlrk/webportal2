@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getUserByUserId } from '../services/firebase/userService';
 import { loginWithUserIdAndPassword } from '../services/firebase/authService';
 
@@ -18,6 +18,8 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +27,7 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       await loginWithUserIdAndPassword(loginId, loginPassword);
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err: any) {
       setError('학번/교번 또는 비밀번호가 올바르지 않습니다.');
     }
@@ -87,7 +89,7 @@ const LoginPage: React.FC = () => {
       }
       
       // 성공 시 상태 넘겨주며 페이지 이동
-      navigate('/setup-password', { state: { docId: result.id, userId: verifyId } });
+      navigate('/setup-password', { state: { docId: result.id, userId: verifyId, from } });
     } catch (err: any) {
       setError('인증 처리 중 오류가 발생했습니다. (서버 연결 실패)');
     }

@@ -1,16 +1,22 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Header: React.FC = () => {
-  const { logout } = useAuth();
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    if (window.confirm('로그아웃 하시겠습니까?')) {
-      try {
-        await logout();
-      } catch (error) {
-        console.error("Logout failed", error);
+  const handleAuthAction = async () => {
+    if (currentUser) {
+      if (window.confirm('로그아웃 하시겠습니까?')) {
+        try {
+          await logout();
+        } catch (error) {
+          console.error("Logout failed", error);
+        }
       }
+    } else {
+      navigate('/login');
     }
   };
 
@@ -37,11 +43,13 @@ const Header: React.FC = () => {
             <span className="material-symbols-outlined text-[26px]">star</span>
           </button>
           <button 
-            onClick={handleLogout}
+            onClick={handleAuthAction}
             className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" 
-            title="내정보 (클릭 시 로그아웃)"
+            title={currentUser ? "로그아웃" : "로그인"}
           >
-            <span className="material-symbols-outlined text-[26px]">person</span>
+            <span className="material-symbols-outlined text-[26px]">
+              {currentUser ? 'logout' : 'person'}
+            </span>
           </button>
         </nav>
       </div>
