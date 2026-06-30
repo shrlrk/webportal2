@@ -1,7 +1,7 @@
 import React, { useState, useEffect, KeyboardEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { registerWithUserIdAndPassword } from '../services/firebase/authService';
-import { updateUserUidAndPasswordSet } from '../services/firebase/userService';
+import { completeUserVerification } from '../services/firebase/userService';
 
 const PasswordSetupPage: React.FC = () => {
   const location = useLocation();
@@ -65,7 +65,7 @@ const PasswordSetupPage: React.FC = () => {
     setLoading(true);
     try {
       const userCredential = await registerWithUserIdAndPassword(state.userId, password);
-      await updateUserUidAndPasswordSet(state.docId, userCredential.user.uid);
+      await completeUserVerification(state.docId, userCredential.user.uid);
       
       setSuccessMsg('비밀번호가 설정되었습니다.');
       
