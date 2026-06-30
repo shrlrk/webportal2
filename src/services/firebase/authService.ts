@@ -1,11 +1,21 @@
+import { auth } from './firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
+export const DUMMY_DOMAIN = '@dy365.edu';
 
-/**
- * Authentication Service
- * 향후 회원가입, 로그인, 로그아웃, 세션 관리 등을 담당합니다.
- */
-class AuthService {
-    // TODO: Implement login, signup, signout methods
-}
+export const loginWithUserIdAndPassword = async (userId: string, password: string) => {
+  if (!auth) throw new Error("Firebase Auth is not initialized");
+  const email = `${userId}${DUMMY_DOMAIN}`;
+  return signInWithEmailAndPassword(auth, email, password);
+};
 
-export const authService = new AuthService();
+export const registerWithUserIdAndPassword = async (userId: string, password: string) => {
+  if (!auth) throw new Error("Firebase Auth is not initialized");
+  const email = `${userId}${DUMMY_DOMAIN}`;
+  return createUserWithEmailAndPassword(auth, email, password);
+};
+
+export const logoutUser = async () => {
+  if (!auth) throw new Error("Firebase Auth is not initialized");
+  return signOut(auth);
+};

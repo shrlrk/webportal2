@@ -1,6 +1,19 @@
 import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Header: React.FC = () => {
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    if (window.confirm('로그아웃 하시겠습니까?')) {
+      try {
+        await logout();
+      } catch (error) {
+        console.error("Logout failed", error);
+      }
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -23,7 +36,11 @@ const Header: React.FC = () => {
           <button className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" title="즐겨찾기">
             <span className="material-symbols-outlined text-[26px]">star</span>
           </button>
-          <button className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" title="내정보">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" 
+            title="내정보 (클릭 시 로그아웃)"
+          >
             <span className="material-symbols-outlined text-[26px]">person</span>
           </button>
         </nav>

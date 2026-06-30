@@ -1,11 +1,33 @@
+import { db } from './firebase';
+import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { UserData } from '../../types';
 
+export const getUserByUserIdAndName = async (userId: string, name: string): Promise<{ id: string; data: UserData } | null> => {
+  if (!db) return null;
+  const usersRef = collection(db, 'users');
+  const q = query(usersRef, where('userId', '==', userId), where('name', '==', name));
+  const snapshot = await getDocs(q);
+  
+  if (snapshot.empty) return null;
+  const docSnap = snapshot.docs[0];
+  return { id: docSnap.id, data: docSnap.data() as UserData };
+};
 
-/**
- * User Service
- * 사용자 프로필, 설정, 즐겨찾기 목록 등 사용자 고유 데이터를 관리합니다.
- */
-class UserService {
-    // TODO: Implement user-specific methods
-}
+export const getUserDataByUid = async (uid: string): Promise<UserData | null> => {
+  if (!db) return null;
+  const usersRef = collection(db, 'users');
+  const q = query(usersRef, where('uid', '==', uid));
+  const snapshot = await getDocs(q);
+  
+  if (snapshot.empty) return null;
+  return snapshot.docs[0].data() as UserData;
+};
 
-export const userService = new UserService();
+export const updateUserUidAndPasswordSet = async (docId: string, uid: string) => {
+  if (!db) return;
+  const userRef = doc(db, 'users', docId);
+  await updateDoc(userRef, {
+    uid,
+    passwordSet: true
+  });
+};
