@@ -2,31 +2,42 @@ import React from 'react';
 
 const HomePage: React.FC = () => {
   const menus = [
-    { id: 1, title: '교과', icon: 'menu_book', color: 'text-blue-500 bg-blue-50 border-blue-100 hover:border-blue-300' },
-    { id: 2, title: '학년', icon: 'groups', color: 'text-green-500 bg-green-50 border-green-100 hover:border-green-300' },
-    { id: 3, title: '진로', icon: 'explore', color: 'text-purple-500 bg-purple-50 border-purple-100 hover:border-purple-300' },
-    { id: 4, title: '학생지원', icon: 'school', color: 'text-orange-500 bg-orange-50 border-orange-100 hover:border-orange-300' }
+    { id: 1, title: '교과', icon: 'menu_book' },
+    { id: 2, title: '학년', icon: 'groups' },
+    { id: 3, title: '진로', icon: 'explore' },
+    { id: 4, title: '학생지원', icon: 'school' }
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-12 md:py-20 flex flex-col items-center flex-grow">
-      {/* Hero Section */}
-      <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4 tracking-tight">환영합니다!</h2>
-        <p className="text-gray-500 text-base md:text-lg">대영고등학교 스마트 포털에서 필요한 메뉴를 선택해 주세요.</p>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12 flex flex-col items-center flex-grow">
+      
+      {/* Search Bar Section */}
+      <div className="w-full max-w-2xl mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 mt-4">
+        <div className="relative group flex items-center">
+          <div className="absolute left-5 flex items-center justify-center pointer-events-none">
+            <span className="material-symbols-outlined text-gray-400 group-hover:text-blue-500 transition-colors text-2xl">search</span>
+          </div>
+          <input 
+            type="text" 
+            className="w-full h-14 sm:h-16 pl-14 pr-24 rounded-full bg-white border border-gray-200 outline-none transition-all duration-300 text-base sm:text-lg focus:border-blue-500 focus:ring-4 focus:ring-blue-50 shadow-sm hover:shadow"
+          />
+          <button className="absolute right-2 h-10 sm:h-12 px-5 sm:px-6 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-semibold rounded-full transition-all duration-200 text-sm shadow-sm flex items-center justify-center">
+            검색
+          </button>
+        </div>
       </div>
 
       {/* Main Menus */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full max-w-4xl">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full max-w-4xl animate-in fade-in slide-in-from-bottom-5 duration-700 delay-150">
         {menus.map((menu) => (
           <button
             key={menu.id}
-            className={`flex flex-col items-center justify-center bg-white border rounded-2xl p-6 md:p-8 hover:shadow-lg transition-all duration-300 group ${menu.color}`}
+            className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-6 md:p-8 hover:shadow-md hover:border-gray-300 transition-all duration-300 group"
           >
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-white shadow-sm transition-transform duration-300 group-hover:scale-110">
-              <span className="material-symbols-outlined text-3xl">{menu.icon}</span>
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-gray-50 border border-gray-100 transition-transform duration-300 group-hover:scale-110">
+              <span className="material-symbols-outlined text-3xl text-gray-600">{menu.icon}</span>
             </div>
-            <span className="text-base md:text-lg font-semibold text-gray-800">{menu.title}</span>
+            <span className="text-base md:text-lg font-semibold text-gray-700">{menu.title}</span>
           </button>
         ))}
       </div>
