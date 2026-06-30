@@ -146,10 +146,16 @@ const LoginPage: React.FC = () => {
 
 
         {error && (
-          <div className={`mb-6 text-[13px] py-3 px-4 rounded-xl font-medium whitespace-pre-wrap leading-relaxed ${
-            tab === 'login' ? 'bg-gray-50 text-gray-600 text-left' : 'bg-red-50 text-red-500 text-center'
+          <div className={`mb-6 text-[13px] py-3 px-4 rounded-xl font-medium leading-relaxed ${
+            tab === 'login' ? 'bg-gray-50 text-gray-600 text-left' : 'bg-red-50 text-red-500 text-center whitespace-pre-wrap'
           }`}>
-            {error}
+            <p>{error}</p>
+            {tab === 'login' && (
+              <div className="mt-3 pt-3 border-t border-gray-200/60">
+                <p className="font-semibold">{SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.title}</p>
+                <p>{SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.message}</p>
+              </div>
+            )}
           </div>
         )}
 
@@ -168,10 +174,6 @@ const LoginPage: React.FC = () => {
             <button type="submit" disabled={loading} className="w-full h-12 bg-blue-500 hover:bg-blue-600 active:scale-[0.98] text-white font-semibold rounded-xl mt-4 transition-all duration-200 disabled:opacity-50">
               {loading ? '로그인 중...' : '로그인'}
             </button>
-            <div className="mt-2 text-[12px] text-gray-500 text-left">
-              <p className="font-medium text-gray-600 mb-0.5">{SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.title}</p>
-              <p>{SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.message}</p>
-            </div>
             <div className="mt-4 text-center text-[13px] text-gray-600">
               처음 이용하시나요? <button type="button" onClick={() => { setTab('verify'); setError(''); setVerifyStep(1); setAlreadyVerified(false); }} className="text-blue-500 font-semibold hover:underline ml-1">최초 인증하기</button>
             </div>
