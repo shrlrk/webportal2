@@ -62,8 +62,26 @@ export const getUserByUserId = async (userId: string): Promise<{ id: string; dat
       return { id: snapshotPrev.docs[0].id, data: snapshotPrev.docs[0].data() as UserData };
     }
   } catch (err) { console.error('[STEP 5 Error]', err); }
+
+  // 6. 최후의 수단: 모든 유저 데이터를 가져와서 메모리에서 직접 필터링 (Firestore array-contains 인덱스 문제 등 우회)
+  try {
+    const snapshotAll = await getDocs(usersRef);
+    const docSnap = snapshotAll.docs.find(d => {
+      const data = d.data();
+      return (
+        data.userId === searchUserId || 
+        String(data.userId) === searchUserId ||
+        (Array.isArray(data.previousUserIds) && data.previousUserIds.includes(searchUserId))
+      );
+    });
+    
+    if (docSnap) {
+      console.log(`[userService] [STEP 6] 전체 문서 JS 필터링으로 조회 성공: ${docSnap.id}`);
+      return { id: docSnap.id, data: docSnap.data() as UserData };
+    }
+  } catch (err) { console.error('[STEP 6 Error]', err); }
   
-  console.log(`[userService] [STEP 6] 모든 조회 실패. null 반환`);
+  console.log(`[userService] [STEP 7] 모든 조회 실패. null 반환`);
   return null;
 };
 
