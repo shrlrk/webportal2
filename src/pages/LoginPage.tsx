@@ -24,6 +24,7 @@ const LoginPage: React.FC = () => {
   // Login State
   const [loginId, setLoginId] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
   
   // Verify State
   const [verifyId, setVerifyId] = useState('');
@@ -169,7 +170,24 @@ const LoginPage: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">비밀번호</label>
-              <input type="password" required value={loginPassword} onChange={e => setLoginPassword(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
+              <div className="relative">
+                <input 
+                  type={showLoginPassword ? 'text' : 'password'} 
+                  required 
+                  value={loginPassword} 
+                  onChange={e => setLoginPassword(e.target.value)} 
+                  className="w-full h-12 pl-4 pr-12 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowLoginPassword(!showLoginPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 focus:outline-none flex items-center justify-center"
+                  tabIndex={-1}
+                  aria-label={showLoginPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                >
+                  <span className="material-symbols-outlined text-[20px]">{showLoginPassword ? 'visibility_off' : 'visibility'}</span>
+                </button>
+              </div>
             </div>
             <button type="submit" disabled={loading} className="w-full h-12 bg-blue-500 hover:bg-blue-600 active:scale-[0.98] text-white font-semibold rounded-xl mt-4 transition-all duration-200 disabled:opacity-50">
               {loading ? '로그인 중...' : '로그인'}
