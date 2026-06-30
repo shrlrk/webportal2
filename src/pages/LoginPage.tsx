@@ -55,16 +55,17 @@ const LoginPage: React.FC = () => {
       const isNameMatch = data.name === verifyName;
       const isCodeMatch = data.oneTimeCode === verifyCode;
       
+      const isFinalValid = isNameMatch && isCodeMatch && data.isActive === true && data.passwordSet === false;
+
       console.log('=== 최초 인증 디버깅 ===');
-      console.log(`입력한 아이디: ${verifyId}`);
-      console.log(`입력한 이름: ${verifyName}`);
-      console.log(`입력한 인증번호: ${verifyCode}`);
-      console.log(`userId 조회 결과 개수: 1`);
-      console.log(`조회된 문서 ID (internalId): ${result.id}`);
-      console.log(`조회된 name: ${data.name}`);
-      console.log(`조회된 oneTimeCode: ${data.oneTimeCode}`);
+      console.log(`입력 userId: ${verifyId}`);
+      console.log(`userId 조회 결과: 1개`);
+      console.log(`문서 ID: ${result.id}`);
+      console.log(`저장된 name: ${data.name} / 비교: ${isNameMatch}`);
+      console.log(`저장된 oneTimeCode: ${data.oneTimeCode} / 비교: ${isCodeMatch}`);
       console.log(`isActive: ${data.isActive}`);
       console.log(`passwordSet: ${data.passwordSet}`);
+      console.log(`최종 인증 가능 여부: ${isFinalValid}`);
       console.log('=======================');
 
       if (data.isActive !== true) {

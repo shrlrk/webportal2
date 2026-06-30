@@ -1,24 +1,26 @@
 import { db } from './src/services/firebase/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 
 const run = async () => {
-  const usersRef = collection(db, 'users');
-  
-  console.log("1. Fetching all users to see the structure...");
-  const allSnap = await getDocs(usersRef);
-  console.log(`Total users in DB: ${allSnap.size}`);
-  allSnap.forEach(doc => {
-    console.log(`Doc ID: ${doc.id}`);
-    console.log(doc.data());
-  });
-
-  console.log("\n2. Querying by userId = '10101'...");
-  const q = query(usersRef, where('userId', '==', '10101'));
-  const snap = await getDocs(q);
-  console.log(`Query result size: ${snap.size}`);
-  if (!snap.empty) {
-    console.log("Found user:", snap.docs[0].id, snap.docs[0].data());
+  console.log("1. Checking S000001 directly...");
+  const docRef = doc(db, 'users', 'S000001');
+  const snap = await getDoc(docRef);
+  if (snap.exists()) {
+    console.log("S000001 Data:");
+    console.dir(snap.data());
+  } else {
+    console.log("S000001 does not exist!");
   }
+
+  console.log("\n2. Querying where userId == '10101'");
+  const usersRef = collection(db, 'users');
+  const q = query(usersRef, where('userId', '==', '10101'));
+  const querySnap = await getDocs(q);
+  console.log(`Query size: ${querySnap.size}`);
+  querySnap.forEach(d => {
+    console.log(`Found doc id: ${d.id}`);
+    console.dir(d.data());
+  });
 
   process.exit(0);
 };
