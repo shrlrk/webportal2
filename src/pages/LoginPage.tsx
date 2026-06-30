@@ -166,12 +166,12 @@ const LoginPage: React.FC = () => {
         ) : alreadyVerified ? (
           <div className="flex flex-col gap-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">최초 인증</h2>
-            <div className="text-center py-6">
-              <p className="text-gray-700 font-medium mb-6">이미 최초 인증이 완료된 계정입니다.<br/>로그인 후 이용해 주세요.</p>
-              <button type="button" onClick={() => { setTab('login'); setAlreadyVerified(false); setError(''); }} className="w-full h-12 bg-blue-500 hover:bg-blue-600 active:scale-[0.98] text-white font-semibold rounded-xl transition-all duration-200">
-                로그인으로 이동
-              </button>
+            <div className="text-[13px] text-gray-600 text-center bg-gray-50 py-3 px-4 rounded-xl font-medium whitespace-pre-wrap leading-relaxed mb-2">
+              이미 최초 인증이 완료된 계정입니다.<br/>로그인으로 이용해 주세요.
             </div>
+            <button type="button" onClick={() => { setTab('login'); setAlreadyVerified(false); setError(''); }} className="w-full h-12 bg-blue-500 hover:bg-blue-600 active:scale-[0.98] text-white font-semibold rounded-xl transition-all duration-200">
+              로그인으로 이동
+            </button>
           </div>
         ) : verifyStep === 1 ? (
           <form onSubmit={handleVerifyStep1} className="flex flex-col gap-4">
