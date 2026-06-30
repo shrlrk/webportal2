@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, query, where, getDocs, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { UserData } from '../../types';
 
 // 아이디(userId) 기반으로 사용자 조회 (문서 ID가 internalId로 변경됨)
@@ -31,6 +31,23 @@ export const getUserByUserId = async (userId: string): Promise<{ id: string; dat
       const docSnap = snapshotNum.docs[0];
       return { id: docSnap.id, data: docSnap.data() as UserData };
     }
+  }
+
+  // 3. internalId 필드로 조회 (교번 등)
+  const qInternal = query(usersRef, where('internalId', '==', searchUserId));
+  const snapshotInternal = await getDocs(qInternal);
+  if (!snapshotInternal.empty) {
+    console.log(`[userService] internalId 필드 조회 성공`);
+    const docSnap = snapshotInternal.docs[0];
+    return { id: docSnap.id, data: docSnap.data() as UserData };
+  }
+
+  // 4. 문서 ID로 직접 조회
+  const docRef = doc(db, 'users', searchUserId);
+  const directDocSnap = await getDoc(docRef);
+  if (directDocSnap.exists()) {
+    console.log(`[userService] 문서 ID 조회 성공`);
+    return { id: directDocSnap.id, data: directDocSnap.data() as UserData };
   }
   
   console.log(`[userService] 계정을 찾을 수 없습니다. (${searchUserId})`);
