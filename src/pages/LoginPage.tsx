@@ -23,6 +23,9 @@ const LoginPage: React.FC = () => {
   const [verifyCode, setVerifyCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [verifyStep, setVerifyStep] = useState<1 | 2>(1);
+  const [alreadyVerified, setAlreadyVerified] = useState(false);
+  const [verifyDocId, setVerifyDocId] = useState('');
   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,7 +46,7 @@ const LoginPage: React.FC = () => {
     setLoading(false);
   };
 
-  const handleVerify = async (e: React.FormEvent) => {
+  const handleVerifyStep1 = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -51,23 +54,37 @@ const LoginPage: React.FC = () => {
       const result = await getUserByUserId(verifyId);
       
       if (!result) {
-        setError('아이디가 존재하지 않습니다.');
+        setError('등록되지 않은 아이디입니다.');
         setLoading(false);
         return;
       }
 
       const data = result.data;
-      
       if (data.passwordSet === true || data.isActive === true) {
-        // Here, checking passwordSet is enough, but checking isActive as well based on user's instruction.
-        // Actually the current DB sets isActive=true, passwordSet=false initially.
-        // So I'll check passwordSet === true.
-        if (data.passwordSet === true) {
-          setError('이미 최초 인증이 완료된 계정입니다. 로그인 탭을 이용해 주세요.');
-          setLoading(false);
-          return;
-        }
+        setAlreadyVerified(true);
+      } else {
+        setVerifyDocId(result.id);
+        setVerifyStep(2);
       }
+    } catch (err: any) {
+      setError('서버 연결에 실패했습니다.');
+    }
+    setLoading(false);
+  };
+
+  const handleVerifyStep2 = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const result = await getUserByUserId(verifyId);
+      if (!result) {
+        setError('등록되지 않은 아이디입니다.');
+        setLoading(false);
+        return;
+      }
+      
+      const data = result.data;
 
       if (data.oneTimeCode !== verifyCode) {
         setError('초기 인증번호가 일치하지 않습니다.');
@@ -91,15 +108,17 @@ const LoginPage: React.FC = () => {
       const userCredential = await registerWithUserIdAndPassword(verifyId, newPassword);
       
       // DB 업데이트
-      await completeUserVerification(result.id, userCredential.user.uid);
+      await completeUserVerification(verifyDocId, userCredential.user.uid);
       
       alert('최초 인증이 완료되었습니다. 로그인해 주세요.');
       
-      // 로그인 탭으로 전환 및 폼 초기화
+      // 폼 초기화 및 로그인 이동
       setVerifyId('');
       setVerifyCode('');
       setNewPassword('');
       setConfirmPassword('');
+      setVerifyStep(1);
+      setAlreadyVerified(false);
       setTab('login');
     } catch (err: any) {
       setError('인증 처리 중 오류가 발생했습니다. (서버 연결 실패)');
@@ -141,19 +160,43 @@ const LoginPage: React.FC = () => {
               {loading ? '로그인 중...' : '로그인'}
             </button>
             <div className="mt-4 text-center text-[13px] text-gray-600">
-              처음 이용하시나요? <button type="button" onClick={() => { setTab('verify'); setError(''); }} className="text-blue-500 font-semibold hover:underline ml-1">최초 인증하기</button>
+              처음 이용하시나요? <button type="button" onClick={() => { setTab('verify'); setError(''); setVerifyStep(1); setAlreadyVerified(false); }} className="text-blue-500 font-semibold hover:underline ml-1">최초 인증하기</button>
+            </div>
+          </form>
+        ) : alreadyVerified ? (
+          <div className="flex flex-col gap-4">
+            <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">최초 인증</h2>
+            <div className="text-center py-6">
+              <p className="text-gray-700 font-medium mb-6">이미 최초 인증이 완료된 계정입니다.<br/>로그인 후 이용해 주세요.</p>
+              <button type="button" onClick={() => { setTab('login'); setAlreadyVerified(false); setError(''); }} className="w-full h-12 bg-blue-500 hover:bg-blue-600 active:scale-[0.98] text-white font-semibold rounded-xl transition-all duration-200">
+                로그인으로 이동
+              </button>
+            </div>
+          </div>
+        ) : verifyStep === 1 ? (
+          <form onSubmit={handleVerifyStep1} className="flex flex-col gap-4">
+            <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">최초 인증</h2>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">아이디</label>
+              <input type="text" required value={verifyId} onChange={e => setVerifyId(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
+              <p className="text-[12px] text-gray-500 mt-1.5 ml-1 text-left">학생은 학번, 교사는 교번을 입력하세요.</p>
+            </div>
+            <button type="submit" disabled={loading} className="w-full h-12 bg-gray-800 hover:bg-gray-900 active:scale-[0.98] text-white font-semibold rounded-xl mt-4 transition-all duration-200 disabled:opacity-50">
+              {loading ? '확인 중...' : '다음'}
+            </button>
+            <div className="mt-4 text-center text-[13px] text-gray-600">
+              이미 인증을 완료했나요? <button type="button" onClick={() => { setTab('login'); setError(''); }} className="text-blue-500 font-semibold hover:underline ml-1">로그인으로 돌아가기</button>
             </div>
           </form>
         ) : (
-          <form onSubmit={handleVerify} className="flex flex-col gap-4">
+          <form onSubmit={handleVerifyStep2} className="flex flex-col gap-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">최초 인증</h2>
             <p className="text-[13px] text-gray-600 font-medium mb-2 bg-gray-50 p-3 rounded-lg border border-gray-100">
               처음 이용하는 학생과 교사는 초기 인증번호로 본인 확인 후 비밀번호를 설정하세요.
             </p>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">아이디</label>
-              <input type="text" required value={verifyId} onChange={e => setVerifyId(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
-              <p className="text-[12px] text-gray-500 mt-1.5 ml-1 text-left">학생은 학번, 교사는 교번을 입력하세요.</p>
+              <input type="text" disabled value={verifyId} className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed outline-none" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">초기 인증번호</label>
