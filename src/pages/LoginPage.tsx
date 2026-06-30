@@ -6,7 +6,7 @@ import { loginWithUserIdAndPassword, registerWithUserIdAndPassword } from '../se
 const SYSTEM_SETTINGS_PLACEHOLDER = {
   loginHelp: {
     title: "비밀번호를 잊으셨나요?",
-    message: "학교생활+ 관리자에게 문의하세요."
+    adminDepartment: "도서관" // 추후 시스템 관리 > 환경설정에서 변경 가능한 값
   }
 };
 
@@ -153,7 +153,7 @@ const LoginPage: React.FC = () => {
             {tab === 'login' && (
               <div className="mt-3 pt-3 border-t border-gray-200/60">
                 <p className="font-semibold">{SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.title}</p>
-                <p>{SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.message}</p>
+                <p>학교생활+ 관리자({SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.adminDepartment})에게 문의하세요.</p>
               </div>
             )}
           </div>
