@@ -1,14 +1,18 @@
 import React, { useEffect } from 'react';
+import Layout from './components/Layout';
+import HomePage from './pages/HomePage';
 import { db } from './services/firebase/firebase';
 
 const App: React.FC = () => {
   useEffect(() => {
-    console.log("Firestore:", db);
+    // Keep firebase connection test silently
+    console.log("Firestore Initialized:", db ? "Success" : "Failed");
   }, []);
+
   return (
-    <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
-      <h1>학교생활+ Firebase 연결 확인 중</h1>
-    </div>
+    <Layout>
+      <HomePage />
+    </Layout>
   );
 };
 
