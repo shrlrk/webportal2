@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getUserByUserId } from '../services/firebase/userService';
 import { loginWithUserIdAndPassword } from '../services/firebase/authService';
 
 const LoginPage: React.FC = () => {
-  const [tab, setTab] = useState<'login' | 'verify'>('login');
+  const location = useLocation();
+  const initialTab = location.state?.tab === 'verify' ? 'verify' : 'login';
+  const [tab, setTab] = useState<'login' | 'verify'>(initialTab);
+
+  useEffect(() => {
+    if (location.state?.tab) {
+      setTab(location.state.tab === 'verify' ? 'verify' : 'login');
+    }
+  }, [location.state?.tab]);
   
   // Login State
   const [loginId, setLoginId] = useState('');
@@ -18,7 +26,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
+  
   const from = location.state?.from?.pathname || '/';
 
   const handleLogin = async (e: React.FormEvent) => {

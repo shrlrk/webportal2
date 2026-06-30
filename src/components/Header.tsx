@@ -79,8 +79,8 @@ const Header: React.FC = () => {
               <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-50">
                 {!currentUser ? (
                   <>
-                    <button onClick={() => handleMenuClick(() => navigate('/login'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">로그인</button>
-                    <button onClick={() => handleMenuClick(() => alertPlaceholder('회원가입'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">회원가입</button>
+                    <button onClick={() => handleMenuClick(() => navigate('/login', { state: { tab: 'login' } }))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">로그인</button>
+                    <button onClick={() => handleMenuClick(() => navigate('/login', { state: { tab: 'verify' } }))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">최초 인증</button>
                   </>
                 ) : (
                   <>
