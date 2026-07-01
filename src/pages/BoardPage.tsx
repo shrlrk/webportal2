@@ -5,7 +5,7 @@ import { canWritePost, canEditOrDeletePost } from '../services/firebase/userServ
 import { toggleFavorite, getUserFavorites } from '../services/firebase/favoriteService';
 import { getPosts, createPost, updatePost, deletePost } from '../services/firebase/boardService';
 import { PostData } from '../types';
-import { Edit2, Trash2, Megaphone } from 'lucide-react';
+import { Edit2, Trash2, Megaphone, AlertCircle } from 'lucide-react';
 import BoardLayout from '../components/BoardLayout';
 
 type ViewMode = 'list' | 'detail' | 'write' | 'edit';
@@ -28,9 +28,11 @@ const BoardPage: React.FC = () => {
   // Form States
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [isImportant, setIsImportant] = useState(false);
   const [showOnMain, setShowOnMain] = useState(false);
-  const [mainStartDate, setMainStartDate] = useState('');
-  const [mainEndDate, setMainEndDate] = useState('');
+  const [publishStartDate, setPublishStartDate] = useState('');
+  const [publishEndDate, setPublishEndDate] = useState('');
+  const [noEndDate, setNoEndDate] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Breadcrumb 및 Title 계산
@@ -134,9 +136,11 @@ const BoardPage: React.FC = () => {
     }
     setTitle('');
     setContent('');
+    setIsImportant(false);
     setShowOnMain(false);
-    setMainStartDate(new Date().toLocaleDateString('en-CA'));
-    setMainEndDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-CA'));
+    setNoEndDate(false);
+    setPublishStartDate(new Date().toLocaleDateString('en-CA'));
+    setPublishEndDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-CA'));
     setViewMode('write');
   };
 
@@ -147,9 +151,11 @@ const BoardPage: React.FC = () => {
     }
     setTitle(post.title);
     setContent(post.content);
+    setIsImportant(post.isImportant || false);
     setShowOnMain(post.showOnMain || false);
-    setMainStartDate(post.mainStartDate || new Date().toLocaleDateString('en-CA'));
-    setMainEndDate(post.mainEndDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-CA'));
+    setNoEndDate(post.noEndDate || false);
+    setPublishStartDate(post.publishStartDate || new Date().toLocaleDateString('en-CA'));
+    setPublishEndDate(post.publishEndDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-CA'));
     setSelectedPost(post);
     setViewMode('edit');
   };
@@ -185,11 +191,15 @@ const BoardPage: React.FC = () => {
       alert("제목과 내용을 모두 입력해 주세요.");
       return;
     }
-    if (showOnMain && (!mainStartDate || !mainEndDate)) {
-      alert("메인 노출 시작일과 종료일을 설정해 주세요.");
+    if (!publishStartDate) {
+      alert("게시 시작일을 설정해 주세요.");
       return;
     }
-    if (showOnMain && mainStartDate > mainEndDate) {
+    if (!noEndDate && !publishEndDate) {
+      alert("게시 종료일을 설정하거나 '종료일 없음'을 체크해 주세요.");
+      return;
+    }
+    if (!noEndDate && publishStartDate > publishEndDate) {
       alert("종료일은 시작일 이후여야 합니다.");
       return;
     }
@@ -203,9 +213,11 @@ const BoardPage: React.FC = () => {
         category,
         subCategory,
         grade: gradeId,
+        isImportant,
         showOnMain,
-        mainStartDate: showOnMain ? mainStartDate : undefined,
-        mainEndDate: showOnMain ? mainEndDate : undefined,
+        publishStartDate,
+        publishEndDate: noEndDate ? undefined : publishEndDate,
+        noEndDate,
         authorId: currentUser.internalId,
         authorUserId: currentUser.userId,
         authorName: currentUser.name,
@@ -224,9 +236,11 @@ const BoardPage: React.FC = () => {
       const success = await updatePost(selectedPost.id, { 
         title, 
         content, 
+        isImportant,
         showOnMain,
-        mainStartDate: showOnMain ? mainStartDate : undefined,
-        mainEndDate: showOnMain ? mainEndDate : undefined
+        publishStartDate,
+        publishEndDate: noEndDate ? undefined : publishEndDate,
+        noEndDate
       });
       if (success) {
         alert("수정되었습니다.");
@@ -270,43 +284,69 @@ const BoardPage: React.FC = () => {
           </div>
           
           {(currentUser?.role === 'admin' || currentUser?.role === 'teacher') && (
-            <div className="mb-4 p-4 border border-gray-100 rounded-xl bg-gray-50/50">
-              <div className="flex items-center gap-2 mb-3">
-                <input 
-                  type="checkbox" 
-                  id="showOnMain" 
-                  checked={showOnMain} 
-                  onChange={(e) => setShowOnMain(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 rounded"
-                />
-                <label htmlFor="showOnMain" className="text-sm font-semibold text-gray-700 flex items-center gap-1 cursor-pointer">
-                  <Megaphone className="w-4 h-4 text-blue-500" /> 메인에 표시
-                </label>
-              </div>
-              
-              {showOnMain && (
-                <div className="flex items-center gap-4 ml-6">
-                  <div className="flex flex-col">
-                    <label className="text-xs text-gray-500 mb-1">노출 시작일</label>
-                    <input 
-                      type="date" 
-                      value={mainStartDate}
-                      onChange={(e) => setMainStartDate(e.target.value)}
-                      className="text-sm border border-gray-200 rounded px-2 py-1 outline-none focus:border-blue-500"
-                    />
-                  </div>
-                  <span className="text-gray-400 mt-4">~</span>
-                  <div className="flex flex-col">
-                    <label className="text-xs text-gray-500 mb-1">노출 종료일</label>
-                    <input 
-                      type="date" 
-                      value={mainEndDate}
-                      onChange={(e) => setMainEndDate(e.target.value)}
-                      className="text-sm border border-gray-200 rounded px-2 py-1 outline-none focus:border-blue-500"
-                    />
-                  </div>
+            <div className="mb-4 p-4 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col gap-4">
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <input 
+                    type="checkbox" 
+                    id="isImportant" 
+                    checked={isImportant} 
+                    onChange={(e) => setIsImportant(e.target.checked)}
+                    className="w-4 h-4 text-red-600 rounded"
+                  />
+                  <label htmlFor="isImportant" className="text-sm font-semibold text-gray-700 flex items-center gap-1 cursor-pointer">
+                    <AlertCircle className="w-4 h-4 text-red-500" /> 중요공지
+                  </label>
                 </div>
-              )}
+
+                <div className="flex items-center gap-2">
+                  <input 
+                    type="checkbox" 
+                    id="showOnMain" 
+                    checked={showOnMain} 
+                    onChange={(e) => setShowOnMain(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 rounded"
+                  />
+                  <label htmlFor="showOnMain" className="text-sm font-semibold text-gray-700 flex items-center gap-1 cursor-pointer">
+                    <Megaphone className="w-4 h-4 text-blue-500" /> 메인에 표시
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-end gap-4 border-t border-gray-200 pt-4 mt-2">
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-500 mb-1 font-medium">게시 시작일</label>
+                  <input 
+                    type="date" 
+                    value={publishStartDate}
+                    onChange={(e) => setPublishStartDate(e.target.value)}
+                    className="text-sm border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 bg-white"
+                  />
+                </div>
+                <span className="text-gray-400 mb-2 font-bold">~</span>
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-500 mb-1 font-medium">게시 종료일</label>
+                  <input 
+                    type="date" 
+                    value={publishEndDate}
+                    onChange={(e) => setPublishEndDate(e.target.value)}
+                    disabled={noEndDate}
+                    className="text-sm border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 bg-white disabled:bg-gray-100 disabled:text-gray-400"
+                  />
+                </div>
+                <div className="flex items-center gap-2 mb-2 ml-2">
+                  <input 
+                    type="checkbox" 
+                    id="noEndDate" 
+                    checked={noEndDate} 
+                    onChange={(e) => setNoEndDate(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 rounded"
+                  />
+                  <label htmlFor="noEndDate" className="text-sm font-semibold text-gray-600 cursor-pointer">
+                    종료일 없음
+                  </label>
+                </div>
+              </div>
             </div>
           )}
 
@@ -348,11 +388,19 @@ const BoardPage: React.FC = () => {
       >
         <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
           <div className="p-6 sm:p-8 border-b border-gray-100">
-            {selectedPost.showOnMain && (
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full mb-3 border border-blue-100">
-                <Megaphone className="w-3 h-3" /> 메인 공지
-              </span>
-            )}
+            <div className="flex gap-2 mb-3">
+              {selectedPost.isImportant && (
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-full border border-red-100">
+                  <AlertCircle className="w-3 h-3" /> 중요
+                </span>
+              )}
+              {selectedPost.showOnMain && (
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
+                  <Megaphone className="w-3 h-3" /> 메인
+                </span>
+              )}
+            </div>
+            
             <h1 className="text-2xl font-bold text-gray-900 mb-4">{selectedPost.title}</h1>
             <div className="flex flex-wrap justify-between items-center gap-4 text-sm text-gray-500">
               <div className="flex items-center gap-3">
@@ -405,37 +453,59 @@ const BoardPage: React.FC = () => {
             <div 
               key={post.id} 
               onClick={() => openDetail(post)}
-              className="bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
+              className="bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-grow">
-                  <div className="flex items-center gap-2 mb-2">
-                    {post.showOnMain && (
-                      <span className="text-[10px] sm:text-xs font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">메인 공지</span>
-                    )}
-                    <h3 className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-1">
-                      {post.title}
-                    </h3>
-                  </div>
-                  <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed mb-3">
-                    {post.content}
-                  </p>
-                  <div className="flex items-center gap-3 text-xs text-gray-400">
-                    <span className="font-medium text-gray-600">{post.authorName}</span>
-                    <span>•</span>
-                    <span>{post.createdAt?.toLocaleDateString()}</span>
-                  </div>
+              <div className="flex-grow min-w-0">
+                <div className="flex items-center gap-2 mb-2">
+                  {post.isImportant && (
+                    <span className="flex-shrink-0 text-[10px] sm:text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-100">중요</span>
+                  )}
+                  {post.showOnMain && (
+                    <span className="flex-shrink-0 text-[10px] sm:text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">메인</span>
+                  )}
+                  <h3 className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors truncate">
+                    {post.title}
+                  </h3>
                 </div>
-                
+                <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed mb-3">
+                  {post.content}
+                </p>
+                <div className="flex items-center gap-3 text-xs text-gray-400">
+                  <span className="font-medium text-gray-600">{post.authorName}</span>
+                  <span>•</span>
+                  <span>{post.createdAt?.toLocaleDateString()}</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center sm:flex-col gap-2 sm:gap-3 flex-shrink-0">
                 <button 
                   onClick={(e) => post.id && handleToggleFavorite(post.id, e)}
-                  className="p-2 -m-2 text-gray-300 hover:text-yellow-400 transition-colors"
+                  className="p-2 -m-2 text-gray-300 hover:text-yellow-400 transition-colors self-end sm:self-center"
                   title="즐겨찾기 토글"
                 >
                   <span className="material-symbols-outlined text-[24px]">
                     {post.id && favorites.has(post.id) ? 'star' : 'star_border'}
                   </span>
                 </button>
+                
+                {currentUser?.role === 'teacher' && canEditOrDeletePost(currentUser, post.authorId) && (
+                  <div className="flex gap-1">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); openEdit(post); }}
+                      className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                      title="수정"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleDelete(post); }}
+                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                      title="삭제"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}

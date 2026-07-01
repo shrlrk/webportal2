@@ -50,12 +50,26 @@ export const getPosts = async (
       updatedAt: doc.data().updatedAt?.toDate() || new Date(),
     })) as PostData[];
 
+    const todayStr = new Date().toLocaleDateString('en-CA'); // 'YYYY-MM-DD' 형식 (로컬 기준)
+    
+    // 1. 기간 필터링 (일반 조회와 메인 노출 모두 적용)
+    fetchedPosts = fetchedPosts.filter(p => {
+      // 시작일이 설정되어 있는데 오늘보다 미래면 숨김
+      if (p.publishStartDate && todayStr < p.publishStartDate) return false;
+      // 종료일이 설정되어 있는데 오늘보다 과거면 숨김 (단, noEndDate면 통과)
+      if (!p.noEndDate && p.publishEndDate && todayStr > p.publishEndDate) return false;
+      return true;
+    });
+
+    // 2. 중요 공지(isImportant) 최우선 정렬, 그 다음 작성일(최신순) 정렬
+    fetchedPosts.sort((a, b) => {
+      if (a.isImportant && !b.isImportant) return -1;
+      if (!a.isImportant && b.isImportant) return 1;
+      // createdAt은 Firestore Timestamp를 Date로 변환한 값
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    });
+
     if (showOnMainOnly) {
-      const todayStr = new Date().toLocaleDateString('en-CA'); // 'YYYY-MM-DD' 형식 (로컬 기준)
-      fetchedPosts = fetchedPosts.filter(p => {
-        if (!p.mainStartDate || !p.mainEndDate) return false;
-        return todayStr >= p.mainStartDate && todayStr <= p.mainEndDate;
-      });
       // 최대 5개까지만 노출
       fetchedPosts = fetchedPosts.slice(0, 5);
     }
@@ -74,8 +88,13 @@ export const createPost = async (postData: Omit<PostData, 'id' | 'createdAt' | '
 
   try {
     const postsRef = collection(db, POSTS_COLLECTION);
+    
+    const cleanData = Object.fromEntries(
+      Object.entries(postData).filter(([_, v]) => v !== undefined)
+    );
+
     const docRef = await addDoc(postsRef, {
-      ...postData,
+      ...cleanData,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
@@ -92,8 +111,13 @@ export const updatePost = async (postId: string, updates: Partial<Omit<PostData,
 
   try {
     const docRef = doc(db, POSTS_COLLECTION, postId);
+    
+    const cleanUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([_, v]) => v !== undefined)
+    );
+
     await updateDoc(docRef, {
-      ...updates,
+      ...cleanUpdates,
       updatedAt: serverTimestamp()
     });
     return true;
