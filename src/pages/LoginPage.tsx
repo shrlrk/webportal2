@@ -34,6 +34,10 @@ const LoginPage: React.FC = () => {
   const [verifyStep, setVerifyStep] = useState<1 | 2>(1);
   const [alreadyVerified, setAlreadyVerified] = useState(false);
   const [verifyDocId, setVerifyDocId] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [verifyName, setVerifyName] = useState('');
+  const [expectedName, setExpectedName] = useState('');
   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -68,10 +72,11 @@ const LoginPage: React.FC = () => {
       }
 
       const data = result.data;
-      if (data.passwordSet === true || data.isActive === true) {
+      if (data.passwordSet === true) {
         setAlreadyVerified(true);
       } else {
         setVerifyDocId(result.id);
+        setExpectedName(data.name || '');
         setVerifyStep(2);
       }
     } catch (err: any) {
@@ -94,6 +99,12 @@ const LoginPage: React.FC = () => {
       
       const data = result.data;
 
+      if (verifyName !== expectedName) {
+        setError('성명이 일치하지 않습니다.');
+        setLoading(false);
+        return;
+      }
+
       if (data.oneTimeCode !== verifyCode) {
         setError('초기 인증번호가 일치하지 않습니다.');
         setLoading(false);
@@ -106,8 +117,13 @@ const LoginPage: React.FC = () => {
         return;
       }
 
-      if (newPassword.length < 6) {
-        setError('비밀번호가 너무 짧습니다. (최소 6자리 이상)');
+      const hasLength = newPassword.length >= 8 && newPassword.length <= 16;
+      const hasLowercase = /[a-z]/.test(newPassword);
+      const hasNumber = /[0-9]/.test(newPassword);
+      const hasSpecial = /[^a-zA-Z0-9]/.test(newPassword);
+      
+      if (!hasLength || !hasLowercase || !hasNumber || !hasSpecial) {
+        setError('비밀번호 조건을 모두 만족해야 합니다.');
         setLoading(false);
         return;
       }
@@ -122,6 +138,8 @@ const LoginPage: React.FC = () => {
       
       // 폼 초기화 및 로그인 이동
       setVerifyId('');
+      setVerifyName('');
+      setExpectedName('');
       setVerifyCode('');
       setNewPassword('');
       setConfirmPassword('');
@@ -224,12 +242,22 @@ const LoginPage: React.FC = () => {
         ) : (
           <form onSubmit={handleVerifyStep2} className="flex flex-col gap-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">최초 인증</h2>
-            <p className="text-[13px] text-gray-600 font-medium mb-2 bg-gray-50 p-3 rounded-lg border border-gray-100">
-              처음 이용하는 학생과 교사는 초기 인증번호로 본인 확인 후 비밀번호를 설정하세요.
+            <p className="text-[13px] text-gray-600 font-medium mb-2 bg-gray-50 p-3 rounded-lg border border-gray-100 whitespace-pre-wrap">
+              초기 인증번호를 입력하고{'\n'}새 비밀번호를 설정해 주세요.
             </p>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">아이디</label>
               <input type="text" disabled value={verifyId} className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed outline-none" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">성명</label>
+              <input type="text" required value={verifyName} onChange={e => setVerifyName(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
+              {verifyName.length > 0 && verifyName !== expectedName && (
+                <div className="mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                  <span className="text-red-500 font-bold">✕</span>
+                  <span>성명이 일치하지 않습니다.</span>
+                </div>
+              )}
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">초기 인증번호</label>
@@ -237,11 +265,84 @@ const LoginPage: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">새 비밀번호</label>
-              <input type="password" required value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
+              <div className="relative">
+                <input 
+                  type={showNewPassword ? 'text' : 'password'} 
+                  required 
+                  value={newPassword} 
+                  onChange={e => setNewPassword(e.target.value)} 
+                  className="w-full h-12 pl-4 pr-12 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 focus:outline-none flex items-center justify-center"
+                  tabIndex={-1}
+                >
+                  <span className="material-symbols-outlined text-[20px]">{showNewPassword ? 'visibility' : 'visibility_off'}</span>
+                </button>
+              </div>
+              <div className="mt-2 flex flex-col gap-1 ml-1 text-[12px] text-gray-600">
+                <div className="flex items-center gap-1.5">
+                  <span className={newPassword.length >= 8 && newPassword.length <= 16 ? "text-blue-500 font-bold" : "text-gray-400"}>
+                    {newPassword.length >= 8 && newPassword.length <= 16 ? "☑" : "☐"}
+                  </span>
+                  <span>8~16자리</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={/[a-z]/.test(newPassword) ? "text-blue-500 font-bold" : "text-gray-400"}>
+                    {/[a-z]/.test(newPassword) ? "☑" : "☐"}
+                  </span>
+                  <span>영문 소문자 포함</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={/[0-9]/.test(newPassword) ? "text-blue-500 font-bold" : "text-gray-400"}>
+                    {/[0-9]/.test(newPassword) ? "☑" : "☐"}
+                  </span>
+                  <span>숫자 포함</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={/[^a-zA-Z0-9]/.test(newPassword) ? "text-blue-500 font-bold" : "text-gray-400"}>
+                    {/[^a-zA-Z0-9]/.test(newPassword) ? "☑" : "☐"}
+                  </span>
+                  <span>특수문자 포함</span>
+                </div>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">새 비밀번호 확인</label>
-              <input type="password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
+              <div className="relative">
+                <input 
+                  type={showConfirmPassword ? 'text' : 'password'} 
+                  required 
+                  value={confirmPassword} 
+                  onChange={e => setConfirmPassword(e.target.value)} 
+                  className="w-full h-12 pl-4 pr-12 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 focus:outline-none flex items-center justify-center"
+                  tabIndex={-1}
+                >
+                  <span className="material-symbols-outlined text-[20px]">{showConfirmPassword ? 'visibility' : 'visibility_off'}</span>
+                </button>
+              </div>
+              {confirmPassword.length > 0 && (
+                <div className={`mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border ${newPassword === confirmPassword ? 'border-blue-500 bg-white' : 'border-red-500 bg-white'}`}>
+                  {newPassword === confirmPassword ? (
+                    <>
+                      <span className="text-blue-500 font-bold">☑</span>
+                      <span>비밀번호가 일치합니다.</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-red-500 font-bold">✕</span>
+                      <span>비밀번호가 일치하지 않습니다.</span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
             <button type="submit" disabled={loading} className="w-full h-12 bg-gray-800 hover:bg-gray-900 active:scale-[0.98] text-white font-semibold rounded-xl mt-4 transition-all duration-200 disabled:opacity-50">
               {loading ? '인증 중...' : '최초 인증 완료'}
