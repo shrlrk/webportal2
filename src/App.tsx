@@ -23,10 +23,13 @@ const App: React.FC = () => {
       {/* Public Routes with Layout */}
       <Route path="/" element={<Layout><Outlet /></Layout>}>
         <Route index element={<HomePage />} />
+        {/* 학년 관련 전용 라우트를 더 구체적이므로 먼저 선언하여 충돌 방지 */}
+        <Route path="board/grade/:gradeId" element={<GradePage />} />
+        <Route path="board/grade/:gradeId/:subCategory" element={<BoardPage />} />
+        
+        {/* 일반 카테고리/서브카테고리 게시판 */}
         <Route path="board/:category/:subCategory" element={<BoardPage />} />
         <Route path="board" element={<BoardPage />} /> {/* 기본 라우트 유지 */}
-        <Route path="grade/:gradeId" element={<GradePage />} />
-        <Route path="grade/:gradeId/board/:subCategory" element={<BoardPage />} />
       </Route>
     </Routes>
   );

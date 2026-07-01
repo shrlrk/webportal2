@@ -9,10 +9,10 @@ const GradePage: React.FC = () => {
   const gradeName = `${gradeId}학년`;
 
   const menus = [
-    { title: '공지사항', icon: Megaphone, path: `/grade/${gradeId}/board/notice`, color: 'text-orange-500', bg: 'bg-orange-50' },
-    { title: '학사일정', icon: Calendar, path: `/grade/${gradeId}/board/calendar`, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { title: '자료실', icon: Folder, path: `/grade/${gradeId}/board/resources`, color: 'text-green-500', bg: 'bg-green-50' },
-    { title: '수강신청', icon: BookOpenCheck, path: `/grade/${gradeId}/enrollment`, color: 'text-purple-500', bg: 'bg-purple-50' },
+    { title: '공지사항', icon: Megaphone, path: `/board/grade/${gradeId}/notice`, color: 'text-orange-500', bg: 'bg-orange-50' },
+    { title: '학사일정', icon: Calendar, path: `/board/grade/${gradeId}/calendar`, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { title: '자료실', icon: Folder, path: `/board/grade/${gradeId}/resources`, color: 'text-green-500', bg: 'bg-green-50' },
+    { title: '수강신청', icon: BookOpenCheck, path: `/board/grade/${gradeId}/enrollment`, color: 'text-purple-500', bg: 'bg-purple-50' },
   ];
 
   return (
