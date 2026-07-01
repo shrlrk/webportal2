@@ -39,6 +39,10 @@ const LoginPage: React.FC = () => {
   const [verifyName, setVerifyName] = useState('');
   const [expectedName, setExpectedName] = useState('');
   
+  const [idError, setIdError] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [codeError, setCodeError] = useState('');
+  
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -61,6 +65,9 @@ const LoginPage: React.FC = () => {
   const handleVerifyStep1 = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIdError('');
+    setNameError('');
+    setCodeError('');
     setLoading(true);
     try {
       const trimmedId = verifyId.trim();
@@ -70,7 +77,7 @@ const LoginPage: React.FC = () => {
       const result = await getUserByUserId(trimmedId);
       
       if (!result) {
-        setError('등록되지 않은 아이디입니다.');
+        setIdError('등록되지 않은 아이디입니다.');
         setLoading(false);
         return;
       }
@@ -82,14 +89,19 @@ const LoginPage: React.FC = () => {
         const dbName = (data.name || '').trim();
         const dbCode = (data.oneTimeCode || '').trim().toLowerCase();
         
+        let hasError = false;
+
         if (trimmedName !== dbName) {
-           setError('✕ 성명이 일치하지 않습니다.');
-           setLoading(false);
-           return;
+           setNameError('성명이 일치하지 않습니다.');
+           hasError = true;
         }
 
         if (trimmedCode !== dbCode) {
-           setError('✕ 초기 인증번호가 일치하지 않습니다.');
+           setCodeError('초기 인증번호가 일치하지 않습니다.');
+           hasError = true;
+        }
+
+        if (hasError) {
            setLoading(false);
            return;
         }
@@ -226,15 +238,35 @@ const LoginPage: React.FC = () => {
             <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">최초 인증</h2>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">아이디</label>
-              <input type="text" required value={verifyId} onChange={e => setVerifyId(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" placeholder="학번 또는 교직원 ID" />
+              <input type="text" required value={verifyId} onChange={e => { setVerifyId(e.target.value); setIdError(''); }} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" placeholder="학번 또는 교직원 ID" />
+              {idError ? (
+                <div className="mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                  <span className="text-red-500 font-bold">✕</span>
+                  <span>{idError}</span>
+                </div>
+              ) : (
+                <p className="text-[12px] text-gray-500 mt-1.5 ml-1 text-left">학생은 학번, 교사는 교번을 입력하세요.</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">성명</label>
-              <input type="text" required value={verifyName} onChange={e => setVerifyName(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" placeholder="이름을 입력하세요" />
+              <input type="text" required value={verifyName} onChange={e => { setVerifyName(e.target.value); setNameError(''); }} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" placeholder="이름을 입력하세요" />
+              {nameError && (
+                <div className="mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                  <span className="text-red-500 font-bold">✕</span>
+                  <span>{nameError}</span>
+                </div>
+              )}
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">초기 인증번호</label>
-              <input type="text" required value={verifyCode} onChange={e => setVerifyCode(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" placeholder="인증번호를 입력하세요" />
+              <input type="text" required value={verifyCode} onChange={e => { setVerifyCode(e.target.value); setCodeError(''); }} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" placeholder="인증번호를 입력하세요" />
+              {codeError && (
+                <div className="mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                  <span className="text-red-500 font-bold">✕</span>
+                  <span>{codeError}</span>
+                </div>
+              )}
             </div>
             <button type="submit" disabled={loading} className="w-full h-12 bg-gray-800 hover:bg-gray-900 active:scale-[0.98] text-white font-semibold rounded-xl mt-4 transition-all duration-200 disabled:opacity-50">
               {loading ? '확인 중...' : '본인 확인'}
