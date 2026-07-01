@@ -5,7 +5,8 @@ import { canWritePost, canEditOrDeletePost } from '../services/firebase/userServ
 import { toggleFavorite, getUserFavorites } from '../services/firebase/favoriteService';
 import { getPosts, createPost, updatePost, deletePost } from '../services/firebase/boardService';
 import { PostData } from '../types';
-import { ArrowLeft, Search, Plus, Edit2, Trash2, Megaphone } from 'lucide-react';
+import { Edit2, Trash2, Megaphone } from 'lucide-react';
+import BoardLayout from '../components/BoardLayout';
 
 type ViewMode = 'list' | 'detail' | 'write' | 'edit';
 
@@ -27,22 +28,49 @@ const BoardPage: React.FC = () => {
   // Form States
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [isMainNotice, setIsMainNotice] = useState(false);
+  const [showOnMain, setShowOnMain] = useState(false);
+  const [mainStartDate, setMainStartDate] = useState('');
+  const [mainEndDate, setMainEndDate] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 게시판 제목 계산
-  let boardTitle = '게시판';
-  if (gradeId) boardTitle = `${gradeId}학년 게시판`;
-  if (subCategory) {
-    const subTitleMap: Record<string, string> = {
-      korean: '국어', english: '영어', math: '수학', music: '음악', pe: '체육',
-      social: '사회', science: '과학', foreign: '외국어', it: '정보', tech: '기술가정', hanja: '한문',
-      info: '진로정보', university: '대학정보', department: '학과정보', counseling: '상담신청', resources: '자료실',
-      wee: 'Wee클래스', health: '보건실', library: '꿈마루도서관', cafeteria: '학생식당',
-      notice: '공지사항', calendar: '학사일정'
-    };
-    if (subTitleMap[subCategory]) boardTitle += ` - ${subTitleMap[subCategory]}`;
-    else boardTitle += ` - ${subCategory}`;
+  // Breadcrumb 및 Title 계산
+  let mainTitle = '게시판';
+  let breadcrumb = '게시판';
+  let readOnlyInfo = '';
+
+  const subTitleMap: Record<string, string> = {
+    korean: '국어', english: '영어', math: '수학', music: '음악', pe: '체육',
+    social: '사회', science: '과학', foreign: '외국어', it: '정보', tech: '기술가정', hanja: '한문',
+    info: '진로정보', university: '대학정보', department: '학과정보', counseling: '상담신청', resources: '자료실',
+    wee: 'Wee클래스', health: '보건실', library: '꿈마루도서관', cafeteria: '학생식당',
+    notice: '공지사항', calendar: '학사일정', enrollment: '수강신청'
+  };
+
+  const getCategoryName = (cat?: string) => {
+    switch (cat) {
+      case 'subject': return '교과';
+      case 'career': return '진로';
+      case 'support': return '학생지원';
+      case 'grade': return '학년';
+      default: return cat || '';
+    }
+  };
+
+  const subTitle = subCategory ? (subTitleMap[subCategory] || subCategory) : '';
+
+  if (gradeId) {
+    breadcrumb = `학년 > ${gradeId}학년`;
+    if (subTitle) breadcrumb += ` > ${subTitle}`;
+    mainTitle = subTitle || `${gradeId}학년`;
+    readOnlyInfo = `${gradeId}학년 · ${subTitle || '게시판'}`;
+  } else if (category && subTitle) {
+    const catName = getCategoryName(category);
+    breadcrumb = `${catName} > ${subTitle}`;
+    mainTitle = subTitle;
+    readOnlyInfo = `${catName} · ${subTitle}`;
+  } else if (subTitle) {
+    mainTitle = subTitle;
+    readOnlyInfo = subTitle;
   }
 
   const loadPosts = async () => {
@@ -106,7 +134,9 @@ const BoardPage: React.FC = () => {
     }
     setTitle('');
     setContent('');
-    setIsMainNotice(false);
+    setShowOnMain(false);
+    setMainStartDate(new Date().toLocaleDateString('en-CA'));
+    setMainEndDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-CA'));
     setViewMode('write');
   };
 
@@ -117,7 +147,9 @@ const BoardPage: React.FC = () => {
     }
     setTitle(post.title);
     setContent(post.content);
-    setIsMainNotice(post.isMainNotice || false);
+    setShowOnMain(post.showOnMain || false);
+    setMainStartDate(post.mainStartDate || new Date().toLocaleDateString('en-CA'));
+    setMainEndDate(post.mainEndDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-CA'));
     setSelectedPost(post);
     setViewMode('edit');
   };
@@ -153,6 +185,14 @@ const BoardPage: React.FC = () => {
       alert("제목과 내용을 모두 입력해 주세요.");
       return;
     }
+    if (showOnMain && (!mainStartDate || !mainEndDate)) {
+      alert("메인 노출 시작일과 종료일을 설정해 주세요.");
+      return;
+    }
+    if (showOnMain && mainStartDate > mainEndDate) {
+      alert("종료일은 시작일 이후여야 합니다.");
+      return;
+    }
     if (!currentUser) return;
 
     setIsSubmitting(true);
@@ -163,7 +203,9 @@ const BoardPage: React.FC = () => {
         category,
         subCategory,
         grade: gradeId,
-        isMainNotice,
+        showOnMain,
+        mainStartDate: showOnMain ? mainStartDate : undefined,
+        mainEndDate: showOnMain ? mainEndDate : undefined,
         authorId: currentUser.internalId,
         authorUserId: currentUser.userId,
         authorName: currentUser.name,
@@ -179,7 +221,13 @@ const BoardPage: React.FC = () => {
         alert("등록 중 오류가 발생했습니다.");
       }
     } else if (viewMode === 'edit' && selectedPost?.id) {
-      const success = await updatePost(selectedPost.id, { title, content, isMainNotice });
+      const success = await updatePost(selectedPost.id, { 
+        title, 
+        content, 
+        showOnMain,
+        mainStartDate: showOnMain ? mainStartDate : undefined,
+        mainEndDate: showOnMain ? mainEndDate : undefined
+      });
       if (success) {
         alert("수정되었습니다.");
         closeView();
@@ -197,20 +245,20 @@ const BoardPage: React.FC = () => {
     p.content.toLowerCase().includes(searchKeyword.toLowerCase())
   );
 
-  // 공지사항 렌더링
   if (viewMode === 'write' || viewMode === 'edit') {
     return (
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-8 animate-in fade-in slide-in-from-bottom-4 duration-300 flex-grow flex flex-col">
-        <div className="flex items-center mb-6">
-          <button onClick={closeView} className="mr-4 text-gray-500 hover:text-gray-800 transition-colors">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <h2 className="text-2xl font-bold text-gray-800">
-            {viewMode === 'write' ? '새 글 작성' : '글 수정'}
-          </h2>
-        </div>
-
+      <BoardLayout
+        title={viewMode === 'write' ? '새 글 작성' : '글 수정'}
+        breadcrumb={breadcrumb}
+        onGoBack={closeView}
+        narrow={true}
+      >
         <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 flex-grow flex flex-col shadow-sm">
+          <div className="mb-4 bg-gray-50 p-3 rounded-lg border border-gray-100">
+            <span className="text-xs text-gray-500 block mb-1">게시판</span>
+            <span className="text-sm font-semibold text-gray-700">{readOnlyInfo}</span>
+          </div>
+
           <div className="mb-4">
             <input 
               type="text" 
@@ -221,18 +269,44 @@ const BoardPage: React.FC = () => {
             />
           </div>
           
-          {currentUser?.role === 'admin' && (
-            <div className="mb-4 flex items-center gap-2">
-              <input 
-                type="checkbox" 
-                id="mainNotice" 
-                checked={isMainNotice} 
-                onChange={(e) => setIsMainNotice(e.target.checked)}
-                className="w-4 h-4 text-blue-600 rounded"
-              />
-              <label htmlFor="mainNotice" className="text-sm font-medium text-gray-700 flex items-center gap-1 cursor-pointer">
-                <Megaphone className="w-4 h-4 text-red-500" /> 메인 노출 공지로 등록
-              </label>
+          {(currentUser?.role === 'admin' || currentUser?.role === 'teacher') && (
+            <div className="mb-4 p-4 border border-gray-100 rounded-xl bg-gray-50/50">
+              <div className="flex items-center gap-2 mb-3">
+                <input 
+                  type="checkbox" 
+                  id="showOnMain" 
+                  checked={showOnMain} 
+                  onChange={(e) => setShowOnMain(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <label htmlFor="showOnMain" className="text-sm font-semibold text-gray-700 flex items-center gap-1 cursor-pointer">
+                  <Megaphone className="w-4 h-4 text-blue-500" /> 메인에 표시
+                </label>
+              </div>
+              
+              {showOnMain && (
+                <div className="flex items-center gap-4 ml-6">
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-500 mb-1">노출 시작일</label>
+                    <input 
+                      type="date" 
+                      value={mainStartDate}
+                      onChange={(e) => setMainStartDate(e.target.value)}
+                      className="text-sm border border-gray-200 rounded px-2 py-1 outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <span className="text-gray-400 mt-4">~</span>
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-500 mb-1">노출 종료일</label>
+                    <input 
+                      type="date" 
+                      value={mainEndDate}
+                      onChange={(e) => setMainEndDate(e.target.value)}
+                      className="text-sm border border-gray-200 rounded px-2 py-1 outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -258,7 +332,7 @@ const BoardPage: React.FC = () => {
             </button>
           </div>
         </div>
-      </div>
+      </BoardLayout>
     );
   }
 
@@ -266,18 +340,16 @@ const BoardPage: React.FC = () => {
     const editOrDeleteAllowed = currentUser ? canEditOrDeletePost(currentUser, selectedPost.authorId) : false;
     
     return (
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-8 animate-in fade-in slide-in-from-bottom-4 duration-300 flex-grow">
-        <div className="flex items-center mb-6">
-          <button onClick={closeView} className="mr-4 text-gray-500 hover:text-gray-800 transition-colors">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <h2 className="text-xl font-bold text-gray-800">{boardTitle}</h2>
-        </div>
-
+      <BoardLayout
+        title={mainTitle}
+        breadcrumb={breadcrumb}
+        onGoBack={closeView}
+        narrow={true}
+      >
         <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
           <div className="p-6 sm:p-8 border-b border-gray-100">
-            {selectedPost.isMainNotice && (
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 px-2.5 py-1 rounded-full mb-3">
+            {selectedPost.showOnMain && (
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full mb-3 border border-blue-100">
                 <Megaphone className="w-3 h-3" /> 메인 공지
               </span>
             )}
@@ -306,45 +378,21 @@ const BoardPage: React.FC = () => {
             </p>
           </div>
         </div>
-      </div>
+      </BoardLayout>
     );
   }
 
   // List View
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-12 flex-grow">
-      
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">{boardTitle}</h2>
-          <p className="text-gray-500 mt-1 text-sm">목록을 확인하고 내용을 검색할 수 있습니다.</p>
-        </div>
-        
-        {writeAllowed && (
-          <button 
-            onClick={openWrite}
-            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-sm w-full sm:w-auto justify-center"
-          >
-            <Plus className="w-5 h-5" />
-            새 글 작성
-          </button>
-        )}
-      </div>
-
-      {/* 검색 바 */}
-      <div className="relative mb-6">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Search className="w-5 h-5 text-gray-400" />
-        </div>
-        <input 
-          type="text" 
-          placeholder="제목이나 내용으로 검색하세요..."
-          value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-          className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all shadow-sm"
-        />
-      </div>
-
+    <BoardLayout
+      title={mainTitle}
+      breadcrumb={breadcrumb}
+      showSearch={true}
+      searchKeyword={searchKeyword}
+      onSearchChange={setSearchKeyword}
+      showWriteButton={writeAllowed}
+      onWriteClick={openWrite}
+    >
       {loading ? (
         <div className="text-center py-20 text-gray-500">데이터를 불러오는 중입니다...</div>
       ) : filteredPosts.length === 0 ? (
@@ -362,8 +410,8 @@ const BoardPage: React.FC = () => {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-grow">
                   <div className="flex items-center gap-2 mb-2">
-                    {post.isMainNotice && (
-                      <span className="text-[10px] sm:text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">공지</span>
+                    {post.showOnMain && (
+                      <span className="text-[10px] sm:text-xs font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">메인 공지</span>
                     )}
                     <h3 className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-1">
                       {post.title}
@@ -393,7 +441,7 @@ const BoardPage: React.FC = () => {
           ))}
         </div>
       )}
-    </div>
+    </BoardLayout>
   );
 };
 

@@ -38,8 +38,8 @@ const GradePage: React.FC = () => {
               }}
               className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-6 md:p-8 hover:shadow-md hover:border-gray-300 transition-all duration-300 group"
             >
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-gray-50 border border-gray-100 transition-all duration-300 group-hover:scale-110 group-hover:bg-blue-50 group-hover:border-blue-100">
-                <Icon className="w-8 h-8 text-gray-500 group-hover:text-blue-500 transition-colors" strokeWidth={1.5} />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-blue-50/50 transition-all duration-300 group-hover:scale-110 group-hover:bg-blue-50 border border-transparent group-hover:border-blue-100">
+                <Icon className="w-8 h-8 text-gray-600 group-hover:text-blue-600 transition-colors" strokeWidth={1.5} />
               </div>
               <span className="text-base md:text-lg font-semibold text-gray-700">{menu.title}</span>
             </button>

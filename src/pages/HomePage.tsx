@@ -120,7 +120,9 @@ const HomePage: React.FC = () => {
             <div className="flex flex-col gap-2">
               {mainNotices.map((notice) => (
                 <div key={notice.id} className="flex justify-between items-center py-2 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-                  <span className="text-gray-700 font-medium line-clamp-1">{notice.title}</span>
+                  <span className="text-gray-700 font-medium line-clamp-1">
+                    {notice.title}
+                  </span>
                   <span className="text-sm text-gray-400 whitespace-nowrap ml-4">
                     {notice.createdAt?.toLocaleDateString()}
                   </span>

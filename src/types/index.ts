@@ -24,7 +24,9 @@ export interface PostData {
   category?: string;
   subCategory?: string;
   grade?: string;
-  isMainNotice?: boolean;
+  showOnMain?: boolean;
+  mainStartDate?: string; // "YYYY-MM-DD"
+  mainEndDate?: string;   // "YYYY-MM-DD"
   authorId: string; // internalId
   authorUserId: string; // userId
   authorName: string;

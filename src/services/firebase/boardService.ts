@@ -21,15 +21,15 @@ export const getPosts = async (
   category?: string, 
   subCategory?: string, 
   grade?: string,
-  isMainNoticeOnly: boolean = false
+  showOnMainOnly: boolean = false
 ): Promise<PostData[]> => {
   if (!db) return [];
 
   const postsRef = collection(db, POSTS_COLLECTION);
   let constraints: any[] = [];
 
-  if (isMainNoticeOnly) {
-    constraints.push(where('isMainNotice', '==', true));
+  if (showOnMainOnly) {
+    constraints.push(where('showOnMain', '==', true));
   } else {
     if (category) constraints.push(where('category', '==', category));
     if (subCategory) constraints.push(where('subCategory', '==', subCategory));
@@ -39,20 +39,28 @@ export const getPosts = async (
   // 최신순 정렬
   constraints.push(orderBy('createdAt', 'desc'));
 
-  // 메인 공지는 5개까지만 가져오도록 제한
-  if (isMainNoticeOnly) {
-    constraints.push(limit(5));
-  }
-
   try {
     const q = query(postsRef, ...constraints);
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
+    
+    let fetchedPosts = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date(),
     })) as PostData[];
+
+    if (showOnMainOnly) {
+      const todayStr = new Date().toLocaleDateString('en-CA'); // 'YYYY-MM-DD' 형식 (로컬 기준)
+      fetchedPosts = fetchedPosts.filter(p => {
+        if (!p.mainStartDate || !p.mainEndDate) return false;
+        return todayStr >= p.mainStartDate && todayStr <= p.mainEndDate;
+      });
+      // 최대 5개까지만 노출
+      fetchedPosts = fetchedPosts.slice(0, 5);
+    }
+
+    return fetchedPosts;
   } catch (err) {
     console.error('Error fetching posts:', err);
     // 복합 인덱스 생성이 필요한 경우 에러 발생 가능
