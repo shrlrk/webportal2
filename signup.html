@@ -166,8 +166,11 @@
         </div>
     </footer>
 
-    <script>
-        function updatePlaceholders() {
+    <script type="module">
+        import { getUserByUserId, completeUserVerification } from './src/services/firebase/userService.ts';
+        import { registerWithUserIdAndPassword } from './src/services/firebase/authService.ts';
+
+        window.updatePlaceholders = function() {
             const role = document.querySelector('input[name="role"]:checked').value;
             const idLabel = document.getElementById('id-label');
             const idInput = document.getElementById('userId');
@@ -179,24 +182,20 @@
                 idLabel.innerText = '교직원 ID';
                 idInput.placeholder = '교직원 ID를 입력해 주세요';
             }
-        }
+        };
 
-        // 본인 확인 로직 (프론트엔드 모의 구현)
-        const expectedNameMock = "홍길동"; // 테스트를 위한 예상 이름
-        const expectedCodeMock = "1234";   // 테스트를 위한 예상 인증번호
-        const alreadyVerifiedIdMock = "90001"; // 테스트를 위한 기가입 아이디
+        let currentDocId = null;
 
-        function handleVerify() {
-            const userId = document.getElementById('userId').value;
-            const userName = document.getElementById('userName').value;
-            const authCode = document.getElementById('authCode').value;
+        window.handleVerify = async function() {
+            const role = document.querySelector('input[name="role"]:checked').value;
+            const userId = document.getElementById('userId').value.trim();
+            const userName = document.getElementById('userName').value.trim();
+            const authCode = document.getElementById('authCode').value.trim();
             
             if (!userId || !userName || !authCode) {
                 alert('학번/교직원 ID, 이름, 초기 인증번호를 모두 입력해 주세요.');
                 return;
             }
-
-            let hasError = false;
 
             const idMsg = document.getElementById('alreadyVerifiedMsg');
             const nameMsg = document.getElementById('nameMismatch');
@@ -206,36 +205,90 @@
             nameMsg.classList.add('hidden');
             codeMsg.classList.add('hidden');
 
-            if (userId === alreadyVerifiedIdMock) {
-                idMsg.classList.remove('hidden');
-                hasError = true;
-            }
+            const btn = document.getElementById('verifyBtn');
+            const originalBtnText = btn.innerText;
+            btn.innerText = '확인 중...';
+            btn.disabled = true;
 
-            if (userName !== expectedNameMock) {
-                nameMsg.classList.remove('hidden');
-                hasError = true;
-            }
-
-            if (authCode !== expectedCodeMock) {
-                codeMsg.classList.remove('hidden');
-                hasError = true;
-            }
-
-            if (!hasError) {
-                document.getElementById('verifyBtn').classList.add('hidden');
+            try {
+                const result = await getUserByUserId(userId);
                 
-                document.getElementById('userId').disabled = true;
-                document.getElementById('userId').classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
-                document.getElementById('userName').disabled = true;
-                document.getElementById('userName').classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
-                document.getElementById('authCode').disabled = true;
-                document.getElementById('authCode').classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+                if (!result) {
+                    alert('등록되지 않은 아이디입니다.');
+                    btn.innerText = originalBtnText;
+                    btn.disabled = false;
+                    return;
+                }
 
-                document.getElementById('step2Area').classList.remove('hidden');
+                const data = result.data;
+                currentDocId = result.id;
+
+                console.log('--- [본인 확인 비교값] ---');
+                console.log('입력값 userId:', userId);
+                console.log('DB userId:', data.userId);
+                console.log('입력값 name:', userName);
+                console.log('DB name:', data.name);
+                console.log('입력값 oneTimeCode:', authCode);
+                console.log('DB oneTimeCode:', data.oneTimeCode);
+                console.log('DB userType:', data.userType);
+                console.log('-------------------------');
+
+                let hasError = false;
+
+                // 1. 이미 가입된 계정인지 확인
+                if (data.passwordSet === true) {
+                    idMsg.classList.remove('hidden');
+                    hasError = true;
+                }
+
+                // 2. 역할 일치 확인 (학생: 'S', 교사: 'T')
+                const expectedType = role === 'student' ? 'S' : 'T';
+                if (data.userType !== expectedType) {
+                    alert(`선택한 역할(${role === 'student' ? '학생' : '교직원'})과 계정의 권한이 일치하지 않습니다.`);
+                    hasError = true;
+                }
+
+                // 3. 이름 확인 (trim 비교)
+                const dbName = (data.name || '').trim();
+                if (userName !== dbName) {
+                    nameMsg.classList.remove('hidden');
+                    hasError = true;
+                }
+
+                // 4. 초기 인증번호 확인 (trim 및 대소문자 무시 비교)
+                const dbCode = (data.oneTimeCode || '').trim().toLowerCase();
+                if (authCode.toLowerCase() !== dbCode) {
+                    codeMsg.classList.remove('hidden');
+                    hasError = true;
+                }
+
+                if (!hasError) {
+                    btn.classList.add('hidden');
+                    
+                    document.getElementById('userId').disabled = true;
+                    document.getElementById('userId').classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+                    document.getElementById('userName').disabled = true;
+                    document.getElementById('userName').classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+                    document.getElementById('authCode').disabled = true;
+                    document.getElementById('authCode').classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+
+                    const roles = document.querySelectorAll('.role-radio');
+                    roles.forEach(r => r.disabled = true);
+
+                    document.getElementById('step2Area').classList.remove('hidden');
+                } else {
+                    btn.innerText = originalBtnText;
+                    btn.disabled = false;
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('본인 확인 중 오류가 발생했습니다.');
+                btn.innerText = originalBtnText;
+                btn.disabled = false;
             }
-        }
+        };
 
-        // 비밀번호 실시간 검증
         document.getElementById('password').addEventListener('input', function(e) {
             const val = e.target.value;
             
@@ -249,10 +302,10 @@
             updateCondition('condNumber', hasNumber);
             updateCondition('condSpecial', hasSpecial);
             
-            checkMatch();
+            window.checkMatch();
         });
 
-        document.getElementById('passwordConfirm').addEventListener('input', checkMatch);
+        document.getElementById('passwordConfirm').addEventListener('input', window.checkMatch);
 
         function updateCondition(id, isMet) {
             const el = document.getElementById(id);
@@ -266,7 +319,7 @@
             }
         }
 
-        function checkMatch() {
+        window.checkMatch = function() {
             const pwd = document.getElementById('password').value;
             const confirm = document.getElementById('passwordConfirm').value;
             const matchStatus = document.getElementById('pwdMatchStatus');
@@ -283,9 +336,9 @@
             } else {
                 matchStatus.classList.add('hidden');
             }
-        }
+        };
 
-        function togglePasswordVisibility(inputId, iconId) {
+        window.togglePasswordVisibility = function(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
             if (input.type === 'password') {
@@ -295,16 +348,15 @@
                 input.type = 'password';
                 icon.textContent = 'visibility_off';
             }
-        }
+        };
 
-        function handleSignup(event) {
+        window.handleSignup = async function(event) {
             event.preventDefault();
             
+            const userId = document.getElementById('userId').value.trim();
             const pwd = document.getElementById('password').value;
             const pwdConfirm = document.getElementById('passwordConfirm').value;
             
-            // 이미 본인확인을 거쳤으므로 여기서는 패스워드만 검증합니다.
-
             if (pwd !== pwdConfirm) {
                 alert('비밀번호가 일치하지 않습니다.');
                 return;
@@ -320,9 +372,24 @@
                 return;
             }
             
-            alert('회원가입이 완료되었습니다. 로그인 화면으로 이동합니다.');
-            location.href = 'login.html';
-        }
+            const btn = document.getElementById('submitBtn');
+            const originalBtnText = btn.innerText;
+            btn.innerText = '가입 처리 중...';
+            btn.disabled = true;
+
+            try {
+                const userCredential = await registerWithUserIdAndPassword(userId, pwd);
+                await completeUserVerification(currentDocId, userCredential.user.uid);
+                
+                alert('회원가입이 완료되었습니다. 로그인 화면으로 이동합니다.');
+                location.href = 'login.html';
+            } catch (err) {
+                console.error(err);
+                alert('회원가입 처리 중 오류가 발생했습니다.');
+                btn.innerText = originalBtnText;
+                btn.disabled = false;
+            }
+        };
     </script>
 </body>
 </html>
