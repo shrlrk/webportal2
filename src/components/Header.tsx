@@ -42,7 +42,7 @@ const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center cursor-pointer hover:opacity-80 transition-opacity">
+        <div className="flex items-center cursor-pointer hover:opacity-80 transition-opacity" onClick={() => navigate('/')}>
           <div className="flex flex-col items-start justify-center">
             <span className="text-gray-600 font-medium text-[12px] sm:text-[14px] tracking-wider mb-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>DY365</span>
             <h1 className="text-[28px] sm:text-[34px] font-bold text-gray-800 tracking-tight leading-none" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
@@ -52,7 +52,11 @@ const Header: React.FC = () => {
         </div>
         {/* Right Icons Area */}
         <nav className="flex items-center gap-5 sm:gap-6">
-          <button className="flex items-center justify-center text-blue-500 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-full transition-all" title="홈">
+          <button 
+            onClick={() => navigate('/')}
+            className="flex items-center justify-center text-blue-500 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-full transition-all" 
+            title="홈"
+          >
             <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>add</span>
           </button>
           <button className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" title="알림">

@@ -9,10 +9,10 @@ const GradePage: React.FC = () => {
   const gradeName = `${gradeId}학년`;
 
   const menus = [
-    { title: '공지사항', icon: Megaphone, path: `/board/grade/${gradeId}/notice`, color: 'text-orange-500', bg: 'bg-orange-50' },
-    { title: '학사일정', icon: Calendar, path: `/board/grade/${gradeId}/calendar`, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { title: '자료실', icon: Folder, path: `/board/grade/${gradeId}/resources`, color: 'text-green-500', bg: 'bg-green-50' },
-    { title: '수강신청', icon: BookOpenCheck, path: `/board/grade/${gradeId}/enrollment`, color: 'text-purple-500', bg: 'bg-purple-50' },
+    { title: '공지사항', icon: Megaphone, path: `/board/grade/${gradeId}/notice` },
+    { title: '학사일정', icon: Calendar, path: `/board/grade/${gradeId}/calendar` },
+    { title: '자료실', icon: Folder, path: `/board/grade/${gradeId}/resources` },
+    { title: '수강신청', icon: BookOpenCheck, path: `/board/grade/${gradeId}/enrollment` },
   ];
 
   return (
@@ -38,8 +38,8 @@ const GradePage: React.FC = () => {
               }}
               className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-6 md:p-8 hover:shadow-md hover:border-gray-300 transition-all duration-300 group"
             >
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 ${menu.bg}`}>
-                <Icon className={`w-8 h-8 ${menu.color}`} strokeWidth={2} />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-gray-50 border border-gray-100 transition-all duration-300 group-hover:scale-110 group-hover:bg-blue-50 group-hover:border-blue-100">
+                <Icon className="w-8 h-8 text-gray-500 group-hover:text-blue-500 transition-colors" strokeWidth={1.5} />
               </div>
               <span className="text-base md:text-lg font-semibold text-gray-700">{menu.title}</span>
             </button>
