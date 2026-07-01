@@ -36,8 +36,8 @@ export const getPosts = async (
     if (grade) constraints.push(where('grade', '==', grade));
   }
 
-  // 최신순 정렬
-  constraints.push(orderBy('createdAt', 'desc'));
+  // 클라이언트 단에서 정렬을 수행하므로 orderBy를 제외합니다.
+  // constraints.push(orderBy('createdAt', 'desc'));
 
   try {
     const q = query(postsRef, ...constraints);

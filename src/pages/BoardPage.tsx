@@ -38,7 +38,6 @@ const BoardPage: React.FC = () => {
   // Breadcrumb 및 Title 계산
   let mainTitle = '게시판';
   let breadcrumb = '게시판';
-  let readOnlyInfo = '';
 
   const subTitleMap: Record<string, string> = {
     korean: '국어', english: '영어', math: '수학', music: '음악', pe: '체육',
@@ -64,15 +63,13 @@ const BoardPage: React.FC = () => {
     breadcrumb = `학년 > ${gradeId}학년`;
     if (subTitle) breadcrumb += ` > ${subTitle}`;
     mainTitle = subTitle || `${gradeId}학년`;
-    readOnlyInfo = `${gradeId}학년 · ${subTitle || '게시판'}`;
   } else if (category && subTitle) {
     const catName = getCategoryName(category);
     breadcrumb = `${catName} > ${subTitle}`;
     mainTitle = subTitle;
-    readOnlyInfo = `${catName} · ${subTitle}`;
   } else if (subTitle) {
     mainTitle = subTitle;
-    readOnlyInfo = subTitle;
+    breadcrumb = subTitle;
   }
 
   const loadPosts = async () => {
@@ -97,7 +94,7 @@ const BoardPage: React.FC = () => {
     }
   }, [currentUser]);
 
-  const writeAllowed = currentUser ? canWritePost(currentUser) : true;
+  const writeAllowed = currentUser ? canWritePost(currentUser) : false;
 
   const handleToggleFavorite = async (postId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -177,7 +174,7 @@ const BoardPage: React.FC = () => {
     }
     if (!post.id) return;
 
-    const confirmDelete = window.confirm(`[${post.title}] 글을 정말 삭제하시겠습니까?`);
+    const confirmDelete = window.confirm(`정말 삭제하시겠습니까?`);
     if (confirmDelete) {
       await deletePost(post.id);
       alert("삭제되었습니다.");
@@ -203,6 +200,18 @@ const BoardPage: React.FC = () => {
       alert("종료일은 시작일 이후여야 합니다.");
       return;
     }
+    
+    // 카테고리 로직 Validation
+    let finalCategory = category;
+    if (gradeId) {
+      finalCategory = 'grade';
+    }
+
+    if (!finalCategory || (!subCategory && !gradeId)) {
+      alert("게시판 카테고리 정보가 올바르지 않습니다.");
+      return;
+    }
+
     if (!currentUser) return;
 
     setIsSubmitting(true);
@@ -210,7 +219,7 @@ const BoardPage: React.FC = () => {
       const newPost: Omit<PostData, 'id' | 'createdAt' | 'updatedAt'> = {
         title,
         content,
-        category,
+        category: finalCategory,
         subCategory,
         grade: gradeId,
         isImportant,
@@ -268,12 +277,15 @@ const BoardPage: React.FC = () => {
         narrow={true}
       >
         <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 flex-grow flex flex-col shadow-sm">
-          <div className="mb-4 bg-gray-50 p-3 rounded-lg border border-gray-100">
-            <span className="text-xs text-gray-500 block mb-1">게시판</span>
-            <span className="text-sm font-semibold text-gray-700">{readOnlyInfo}</span>
+          
+          {/* 게시 위치 (읽기 전용) */}
+          <div className="mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
+            <span className="text-xs text-gray-500 block mb-1">게시 위치(읽기 전용)</span>
+            <span className="text-sm font-semibold text-gray-700">{breadcrumb}</span>
           </div>
 
-          <div className="mb-4">
+          {/* 제목 */}
+          <div className="mb-6">
             <input 
               type="text" 
               placeholder="제목을 입력하세요" 
@@ -283,8 +295,11 @@ const BoardPage: React.FC = () => {
             />
           </div>
           
+          {/* 옵션 */}
           {(currentUser?.role === 'admin' || currentUser?.role === 'teacher') && (
-            <div className="mb-4 p-4 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col gap-4">
+            <div className="mb-6 p-5 border border-gray-100 rounded-xl bg-white shadow-sm flex flex-col gap-4">
+              <span className="text-sm font-bold text-gray-800">옵션</span>
+              
               <div className="flex flex-wrap items-center gap-6">
                 <div className="flex items-center gap-2">
                   <input 
@@ -294,8 +309,8 @@ const BoardPage: React.FC = () => {
                     onChange={(e) => setIsImportant(e.target.checked)}
                     className="w-4 h-4 text-red-600 rounded"
                   />
-                  <label htmlFor="isImportant" className="text-sm font-semibold text-gray-700 flex items-center gap-1 cursor-pointer">
-                    <AlertCircle className="w-4 h-4 text-red-500" /> 중요공지
+                  <label htmlFor="isImportant" className="text-sm font-semibold text-gray-700 cursor-pointer">
+                    중요공지
                   </label>
                 </div>
 
@@ -307,13 +322,13 @@ const BoardPage: React.FC = () => {
                     onChange={(e) => setShowOnMain(e.target.checked)}
                     className="w-4 h-4 text-blue-600 rounded"
                   />
-                  <label htmlFor="showOnMain" className="text-sm font-semibold text-gray-700 flex items-center gap-1 cursor-pointer">
-                    <Megaphone className="w-4 h-4 text-blue-500" /> 메인에 표시
+                  <label htmlFor="showOnMain" className="text-sm font-semibold text-gray-700 cursor-pointer">
+                    메인에 표시
                   </label>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-end gap-4 border-t border-gray-200 pt-4 mt-2">
+              <div className="flex flex-wrap items-end gap-4 border-t border-gray-100 pt-4 mt-1">
                 <div className="flex flex-col">
                   <label className="text-xs text-gray-500 mb-1 font-medium">게시 시작일</label>
                   <input 
@@ -323,7 +338,7 @@ const BoardPage: React.FC = () => {
                     className="text-sm border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 bg-white"
                   />
                 </div>
-                <span className="text-gray-400 mb-2 font-bold">~</span>
+                
                 <div className="flex flex-col">
                   <label className="text-xs text-gray-500 mb-1 font-medium">게시 종료일</label>
                   <input 
@@ -334,6 +349,7 @@ const BoardPage: React.FC = () => {
                     className="text-sm border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 bg-white disabled:bg-gray-100 disabled:text-gray-400"
                   />
                 </div>
+
                 <div className="flex items-center gap-2 mb-2 ml-2">
                   <input 
                     type="checkbox" 
@@ -350,23 +366,25 @@ const BoardPage: React.FC = () => {
             </div>
           )}
 
-          <div className="flex-grow min-h-[300px]">
+          {/* 내용 */}
+          <div className="flex-grow min-h-[300px] mb-4">
             <textarea 
               placeholder="내용을 입력하세요..." 
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full h-full resize-none outline-none text-gray-700 leading-relaxed bg-transparent"
+              className="w-full h-full resize-none outline-none text-gray-700 leading-relaxed bg-transparent p-2 border border-gray-100 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-50 transition-all"
             />
           </div>
 
-          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
-            <button onClick={closeView} className="px-6 py-2.5 rounded-lg font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">
+          {/* 버튼 */}
+          <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
+            <button onClick={closeView} className="px-6 py-2.5 rounded-xl font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">
               취소
             </button>
             <button 
               onClick={handleSubmit} 
               disabled={isSubmitting}
-              className="px-6 py-2.5 rounded-lg font-medium text-white bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 transition-colors"
+              className="px-6 py-2.5 rounded-xl font-semibold text-white bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 transition-colors"
             >
               {isSubmitting ? '처리 중...' : (viewMode === 'write' ? '등록' : '수정 완료')}
             </button>
