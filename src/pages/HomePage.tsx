@@ -88,6 +88,16 @@ const HomePage: React.FC = () => {
     setActiveMenuId(activeMenuId === id ? null : id);
   };
 
+  const handleNoticeClick = (notice: PostData) => {
+    if (notice.category === 'grade' && notice.grade) {
+      navigate(`/board/grade/${notice.grade}/${notice.subCategory || 'notice'}`, { state: { openPostId: notice.id } });
+    } else if (notice.category && notice.subCategory) {
+      navigate(`/board/${notice.category}/${notice.subCategory}`, { state: { openPostId: notice.id } });
+    } else {
+      navigate('/board', { state: { openPostId: notice.id } });
+    }
+  };
+
   const activeMenu = menus.find(m => m.id === activeMenuId);
 
   return (
@@ -119,7 +129,11 @@ const HomePage: React.FC = () => {
             </div>
             <div className="flex flex-col gap-2">
               {mainNotices.map((notice) => (
-                <div key={notice.id} className="flex justify-between items-center py-2 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+                <div 
+                  key={notice.id} 
+                  onClick={() => handleNoticeClick(notice)}
+                  className="flex justify-between items-center py-2 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                >
                   <span className="text-gray-700 font-medium line-clamp-1">
                     {notice.title}
                   </span>

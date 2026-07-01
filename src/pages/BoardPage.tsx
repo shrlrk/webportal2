@@ -85,6 +85,18 @@ const BoardPage: React.FC = () => {
   }, [category, subCategory, gradeId]);
 
   useEffect(() => {
+    if (location.state?.openPostId && posts.length > 0) {
+      const targetPost = posts.find(p => p.id === location.state.openPostId);
+      if (targetPost) {
+        setSelectedPost(targetPost);
+        setViewMode('detail');
+        // 히스토리 상태 지우기 (새로고침 시 다시 열리지 않도록)
+        window.history.replaceState({}, document.title);
+      }
+    }
+  }, [location.state, posts]);
+
+  useEffect(() => {
     if (currentUser?.internalId) {
       getUserFavorites(currentUser.internalId).then((favIds) => {
         setFavorites(new Set(favIds));
@@ -287,89 +299,70 @@ const BoardPage: React.FC = () => {
       >
         <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 flex-grow flex flex-col shadow-sm">
           
-          {/* 게시 위치 (읽기 전용) */}
-          <div className="mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
-            <span className="text-xs text-gray-500 block mb-1">게시 위치(읽기 전용)</span>
-            <span className="text-sm font-semibold text-gray-700">{breadcrumb}</span>
-          </div>
-
-          {/* 제목 */}
-          <div className="mb-6">
-            <input 
-              type="text" 
-              placeholder="제목을 입력하세요" 
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full text-xl font-bold border-b border-gray-200 pb-3 outline-none focus:border-blue-500 transition-colors bg-transparent"
-            />
-          </div>
-          
           {/* 옵션 */}
           {(currentUser?.role === 'admin' || currentUser?.role === 'teacher') && (
             <div className="mb-6 p-5 border border-gray-100 rounded-xl bg-white shadow-sm flex flex-col gap-4">
               <span className="text-sm font-bold text-gray-800">옵션</span>
               
-              <div className="flex flex-wrap items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <input 
-                    type="checkbox" 
-                    id="isImportant" 
-                    checked={isImportant} 
-                    onChange={(e) => setIsImportant(e.target.checked)}
-                    className="w-4 h-4 text-red-600 rounded"
-                  />
-                  <label htmlFor="isImportant" className="text-sm font-semibold text-gray-700 cursor-pointer">
-                    중요공지
-                  </label>
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      id="isImportant" 
+                      checked={isImportant} 
+                      onChange={(e) => setIsImportant(e.target.checked)}
+                      className="w-4 h-4 text-red-600 rounded"
+                    />
+                    <label htmlFor="isImportant" className="text-sm font-semibold text-gray-700 cursor-pointer">
+                      중요공지
+                    </label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      id="showOnMain" 
+                      checked={showOnMain} 
+                      onChange={(e) => setShowOnMain(e.target.checked)}
+                      className="w-4 h-4 text-blue-600 rounded"
+                    />
+                    <label htmlFor="showOnMain" className="text-sm font-semibold text-gray-700 cursor-pointer">
+                      메인에 표시
+                    </label>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <input 
-                    type="checkbox" 
-                    id="showOnMain" 
-                    checked={showOnMain} 
-                    onChange={(e) => setShowOnMain(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded"
-                  />
-                  <label htmlFor="showOnMain" className="text-sm font-semibold text-gray-700 cursor-pointer">
-                    메인에 표시
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-end gap-4 border-t border-gray-100 pt-4 mt-1">
-                <div className="flex flex-col">
-                  <label className="text-xs text-gray-500 mb-1 font-medium">게시 시작일</label>
-                  <input 
-                    type="date" 
-                    value={publishStartDate}
-                    onChange={(e) => setPublishStartDate(e.target.value)}
-                    className="text-sm border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 bg-white"
-                  />
-                </div>
-                
-                <div className="flex flex-col">
-                  <label className="text-xs text-gray-500 mb-1 font-medium">게시 종료일</label>
-                  <input 
-                    type="date" 
-                    value={publishEndDate}
-                    onChange={(e) => setPublishEndDate(e.target.value)}
-                    disabled={noEndDate}
-                    className="text-sm border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 bg-white disabled:bg-gray-100 disabled:text-gray-400"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 mb-2 ml-2">
-                  <input 
-                    type="checkbox" 
-                    id="noEndDate" 
-                    checked={noEndDate} 
-                    onChange={(e) => setNoEndDate(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded"
-                  />
-                  <label htmlFor="noEndDate" className="text-sm font-semibold text-gray-600 cursor-pointer">
-                    종료일 없음
-                  </label>
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium text-gray-700 mb-1">게시 기간</span>
+                  <div className="flex items-center flex-wrap gap-3">
+                    <input 
+                      type="date" 
+                      value={publishStartDate}
+                      onChange={(e) => setPublishStartDate(e.target.value)}
+                      className="text-sm border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500 bg-white"
+                    />
+                    <span className="text-gray-400">~</span>
+                    <input 
+                      type="date" 
+                      value={publishEndDate}
+                      onChange={(e) => setPublishEndDate(e.target.value)}
+                      disabled={noEndDate}
+                      className="text-sm border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500 bg-white disabled:bg-gray-100 disabled:text-gray-400"
+                    />
+                    <div className="flex items-center gap-2 ml-4">
+                      <input 
+                        type="checkbox" 
+                        id="noEndDate" 
+                        checked={noEndDate} 
+                        onChange={(e) => setNoEndDate(e.target.checked)}
+                        className="w-4 h-4 text-blue-600 rounded"
+                      />
+                      <label htmlFor="noEndDate" className="text-sm text-gray-600 cursor-pointer">
+                        종료일 없음
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -462,6 +455,7 @@ const BoardPage: React.FC = () => {
     <BoardLayout
       title={mainTitle}
       breadcrumb={breadcrumb}
+      onGoBack={() => navigate(-1)}
       showSearch={true}
       searchKeyword={searchKeyword}
       onSearchChange={setSearchKeyword}

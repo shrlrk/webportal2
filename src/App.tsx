@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import PasswordSetupPage from './pages/PasswordSetupPage';
 import BoardPage from './pages/BoardPage';
 import GradePage from './pages/GradePage';
+import FavoritePage from './pages/FavoritePage';
 import { useAuth } from './contexts/AuthContext';
 
 const App: React.FC = () => {
@@ -30,6 +31,9 @@ const App: React.FC = () => {
         {/* 일반 카테고리/서브카테고리 게시판 */}
         <Route path="board/:category/:subCategory" element={<BoardPage />} />
         <Route path="board" element={<BoardPage />} /> {/* 기본 라우트 유지 */}
+        
+        {/* 즐겨찾기 라우트 */}
+        <Route path="favorites" element={<FavoritePage />} />
       </Route>
     </Routes>
   );

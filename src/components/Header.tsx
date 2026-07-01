@@ -62,7 +62,11 @@ const Header: React.FC = () => {
           <button className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" title="알림">
             <span className="material-symbols-outlined text-[26px]">notifications</span>
           </button>
-          <button className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" title="즐겨찾기">
+          <button 
+            onClick={() => navigate('/favorites')}
+            className="flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-50 p-2 rounded-full transition-all" 
+            title="즐겨찾기"
+          >
             <span className="material-symbols-outlined text-[26px]">star</span>
           </button>
           <div className="relative" ref={dropdownRef}>
