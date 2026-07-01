@@ -146,15 +146,21 @@ const LoginPage: React.FC = () => {
     const hasLength = newPassword.length >= 8 && newPassword.length <= 16;
     const hasLowercase = /[a-z]/.test(newPassword);
     const hasNumber = /[0-9]/.test(newPassword);
-    const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?~]/.test(newPassword);
-    const isOnlyAllowedChars = /^[a-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?~]+$/.test(newPassword);
+    
+    const allowedSpecials = "!@#$%^&*()_+-=[]{};':\"\\|,.<>/?~";
+    const hasSpecial = [...newPassword].some(char => allowedSpecials.includes(char));
+    
+    // 허용된 문자(소문자, 숫자, 지정된 특수문자)외의 문자가 하나라도 있는지 검사 (한글, 대문자, 이모지 등 차단)
+    const hasInvalidChar = [...newPassword].some(char => 
+      !/[a-z0-9]/.test(char) && !allowedSpecials.includes(char)
+    );
     
     if (!hasLength || !hasLowercase || !hasNumber || !hasSpecial) {
       setError('비밀번호 조건을 모두 만족해야 합니다.');
       return;
     }
 
-    if (!isOnlyAllowedChars) {
+    if (hasInvalidChar) {
       setError('비밀번호는 영문 소문자, 숫자, 허용된 특수문자만 사용할 수 있습니다. (한글, 대문자 등 불가)');
       return;
     }
@@ -344,8 +350,8 @@ const LoginPage: React.FC = () => {
                   <span>숫자 포함</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?~]/.test(newPassword) ? "text-blue-500 font-bold" : "text-gray-400"}>
-                    {/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?~]/.test(newPassword) ? "☑" : "☐"}
+                  <span className={[...newPassword].some(char => "!@#$%^&*()_+-=[]{};':\"\\|,.<>/?~".includes(char)) ? "text-blue-500 font-bold" : "text-gray-400"}>
+                    {[...newPassword].some(char => "!@#$%^&*()_+-=[]{};':\"\\|,.<>/?~".includes(char)) ? "☑" : "☐"}
                   </span>
                   <span>특수문자 포함</span>
                 </div>
