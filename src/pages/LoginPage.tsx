@@ -44,6 +44,7 @@ const LoginPage: React.FC = () => {
   const [codeError, setCodeError] = useState('');
   
   const [error, setError] = useState('');
+  const [showLoginHelp, setShowLoginHelp] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
@@ -52,6 +53,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setShowLoginHelp(false);
     setLoading(true);
     try {
       const trimmedId = loginId.trim();
@@ -73,6 +75,7 @@ const LoginPage: React.FC = () => {
       navigate(from, { replace: true });
     } catch (err: any) {
       setError('아이디 또는 비밀번호를 다시 확인해 주세요.');
+      setShowLoginHelp(true);
     }
     setLoading(false);
   };
@@ -193,7 +196,7 @@ const LoginPage: React.FC = () => {
             tab === 'login' ? 'bg-gray-50 text-gray-600 text-left' : 'bg-red-50 text-red-500 text-center'
           }`}>
             <p>{error}</p>
-            {tab === 'login' && (
+            {tab === 'login' && showLoginHelp && (
               <div className="mt-3 pt-3 border-t border-gray-200/60">
                 <p className="font-semibold">{SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.title}</p>
                 <p>학교생활+ 관리자({SYSTEM_SETTINGS_PLACEHOLDER.loginHelp.adminDepartment})에게 문의하세요.</p>
