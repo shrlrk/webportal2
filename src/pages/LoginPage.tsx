@@ -63,7 +63,11 @@ const LoginPage: React.FC = () => {
     setError('');
     setLoading(true);
     try {
-      const result = await getUserByUserId(verifyId);
+      const trimmedId = verifyId.trim();
+      const trimmedName = verifyName.trim();
+      const trimmedCode = verifyCode.trim().toLowerCase();
+
+      const result = await getUserByUserId(trimmedId);
       
       if (!result) {
         setError('등록되지 않은 아이디입니다.');
@@ -75,6 +79,21 @@ const LoginPage: React.FC = () => {
       if (data.passwordSet === true) {
         setAlreadyVerified(true);
       } else {
+        const dbName = (data.name || '').trim();
+        const dbCode = (data.oneTimeCode || '').trim().toLowerCase();
+        
+        if (trimmedName !== dbName) {
+           setError('✕ 성명이 일치하지 않습니다.');
+           setLoading(false);
+           return;
+        }
+
+        if (trimmedCode !== dbCode) {
+           setError('✕ 초기 인증번호가 일치하지 않습니다.');
+           setLoading(false);
+           return;
+        }
+
         setVerifyDocId(result.id);
         setExpectedName(data.name || '');
         setVerifyStep(2);
@@ -88,46 +107,24 @@ const LoginPage: React.FC = () => {
   const handleVerifyStep2 = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    
+    if (newPassword !== confirmPassword) {
+      setError('새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.');
+      return;
+    }
+
+    const hasLength = newPassword.length >= 8 && newPassword.length <= 16;
+    const hasLowercase = /[a-z]/.test(newPassword);
+    const hasNumber = /[0-9]/.test(newPassword);
+    const hasSpecial = /[^a-zA-Z0-9]/.test(newPassword);
+    
+    if (!hasLength || !hasLowercase || !hasNumber || !hasSpecial) {
+      setError('비밀번호 조건을 모두 만족해야 합니다.');
+      return;
+    }
+
     setLoading(true);
     try {
-      const result = await getUserByUserId(verifyId);
-      if (!result) {
-        setError('등록되지 않은 아이디입니다.');
-        setLoading(false);
-        return;
-      }
-      
-      const data = result.data;
-
-      if (verifyName !== expectedName) {
-        setError('성명이 일치하지 않습니다.');
-        setLoading(false);
-        return;
-      }
-
-      if (data.oneTimeCode !== verifyCode) {
-        setError('초기 인증번호가 일치하지 않습니다.');
-        setLoading(false);
-        return;
-      }
-      
-      if (newPassword !== confirmPassword) {
-        setError('새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.');
-        setLoading(false);
-        return;
-      }
-
-      const hasLength = newPassword.length >= 8 && newPassword.length <= 16;
-      const hasLowercase = /[a-z]/.test(newPassword);
-      const hasNumber = /[0-9]/.test(newPassword);
-      const hasSpecial = /[^a-zA-Z0-9]/.test(newPassword);
-      
-      if (!hasLength || !hasLowercase || !hasNumber || !hasSpecial) {
-        setError('비밀번호 조건을 모두 만족해야 합니다.');
-        setLoading(false);
-        return;
-      }
-      
       // 계정 생성
       const userCredential = await registerWithUserIdAndPassword(verifyId, newPassword);
       
@@ -229,11 +226,18 @@ const LoginPage: React.FC = () => {
             <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">최초 인증</h2>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">아이디</label>
-              <input type="text" required value={verifyId} onChange={e => setVerifyId(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
-              <p className="text-[12px] text-gray-500 mt-1.5 ml-1 text-left">학생은 학번, 교사는 교번을 입력하세요.</p>
+              <input type="text" required value={verifyId} onChange={e => setVerifyId(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" placeholder="학번 또는 교직원 ID" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">성명</label>
+              <input type="text" required value={verifyName} onChange={e => setVerifyName(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" placeholder="이름을 입력하세요" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">초기 인증번호</label>
+              <input type="text" required value={verifyCode} onChange={e => setVerifyCode(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" placeholder="인증번호를 입력하세요" />
             </div>
             <button type="submit" disabled={loading} className="w-full h-12 bg-gray-800 hover:bg-gray-900 active:scale-[0.98] text-white font-semibold rounded-xl mt-4 transition-all duration-200 disabled:opacity-50">
-              {loading ? '확인 중...' : '다음'}
+              {loading ? '확인 중...' : '본인 확인'}
             </button>
             <div className="mt-4 text-center text-[13px] text-gray-600">
               이미 인증을 완료했나요? <button type="button" onClick={() => { setTab('login'); setError(''); }} className="text-blue-500 font-semibold hover:underline ml-1">로그인으로 돌아가기</button>
@@ -243,7 +247,7 @@ const LoginPage: React.FC = () => {
           <form onSubmit={handleVerifyStep2} className="flex flex-col gap-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">최초 인증</h2>
             <p className="text-[13px] text-gray-600 font-medium mb-2 bg-gray-50 p-3 rounded-lg border border-gray-100 whitespace-pre-wrap">
-              초기 인증번호를 입력하고{'\n'}새 비밀번호를 설정해 주세요.
+              본인 확인이 완료되었습니다.{'\n'}새 비밀번호를 설정해 주세요.
             </p>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">아이디</label>
@@ -251,17 +255,7 @@ const LoginPage: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">성명</label>
-              <input type="text" required value={verifyName} onChange={e => setVerifyName(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
-              {verifyName.length > 0 && verifyName !== expectedName && (
-                <div className="mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white">
-                  <span className="text-red-500 font-bold">✕</span>
-                  <span>성명이 일치하지 않습니다.</span>
-                </div>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">초기 인증번호</label>
-              <input type="text" required value={verifyCode} onChange={e => setVerifyCode(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-gray-50/50 text-gray-800" />
+              <input type="text" disabled value={verifyName} className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed outline-none" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">새 비밀번호</label>
@@ -329,7 +323,7 @@ const LoginPage: React.FC = () => {
                 </button>
               </div>
               {confirmPassword.length > 0 && (
-                <div className={`mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border ${newPassword === confirmPassword ? 'border-blue-500 bg-white' : 'border-red-500 bg-white'}`}>
+                <div className="mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white">
                   {newPassword === confirmPassword ? (
                     <>
                       <span className="text-blue-500 font-bold">☑</span>
@@ -337,7 +331,7 @@ const LoginPage: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <span className="text-red-500 font-bold">✕</span>
+                      <span className="text-gray-400 font-bold">✕</span>
                       <span>비밀번호가 일치하지 않습니다.</span>
                     </>
                   )}
@@ -348,7 +342,7 @@ const LoginPage: React.FC = () => {
               {loading ? '인증 중...' : '최초 인증 완료'}
             </button>
             <div className="mt-4 text-center text-[13px] text-gray-600">
-              이미 인증을 완료했나요? <button type="button" onClick={() => { setTab('login'); setError(''); }} className="text-blue-500 font-semibold hover:underline ml-1">로그인으로 돌아가기</button>
+              <button type="button" onClick={() => { setVerifyStep(1); setError(''); }} className="text-gray-500 font-medium hover:underline">이전 단계로 돌아가기</button>
             </div>
           </form>
         )}
