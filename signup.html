@@ -66,26 +66,43 @@
                     </label>
                 </div>
 
-                <div>
-                    <label id="id-label" for="userId" class="block text-sm font-medium text-gray-700 mb-1.5">학번</label>
-                    <input type="text" id="userId" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="예) 10101">
-                </div>
-                
-                <div>
-                    <label for="userName" class="block text-sm font-medium text-gray-700 mb-1.5">이름</label>
-                    <input type="text" id="userName" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="실명을 입력해 주세요">
-                    <div id="nameMismatch" class="hidden mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white">
-                        <span class="text-red-500 font-bold">✕</span>
-                        <span>성명이 일치하지 않습니다.</span>
+                <!-- Section 1 -->
+                <div id="step1Area" class="space-y-5">
+                    <div>
+                        <label id="id-label" for="userId" class="block text-sm font-medium text-gray-700 mb-1.5">학번</label>
+                        <input type="text" id="userId" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="예) 10101">
+                        <div id="alreadyVerifiedMsg" class="hidden mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                            <span class="text-red-500 font-bold">✕</span>
+                            <span>이미 가입된 계정입니다. 로그인으로 이용해 주세요.</span>
+                        </div>
                     </div>
-                </div>
+                    
+                    <div>
+                        <label for="userName" class="block text-sm font-medium text-gray-700 mb-1.5">이름</label>
+                        <input type="text" id="userName" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="실명을 입력해 주세요">
+                        <div id="nameMismatch" class="hidden mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                            <span class="text-red-500 font-bold">✕</span>
+                            <span>성명이 일치하지 않습니다.</span>
+                        </div>
+                    </div>
 
-                <div>
-                    <label for="authCode" class="block text-sm font-medium text-gray-700 mb-1.5">초기 인증번호</label>
-                    <input type="text" id="authCode" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="학교에서 발급받은 인증번호 입력">
+                    <div>
+                        <label for="authCode" class="block text-sm font-medium text-gray-700 mb-1.5">초기 인증번호</label>
+                        <input type="text" id="authCode" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="학교에서 발급받은 인증번호 입력">
+                        <div id="codeMismatch" class="hidden mt-2 text-[12px] text-gray-600 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                            <span class="text-red-500 font-bold">✕</span>
+                            <span>초기 인증번호가 일치하지 않습니다.</span>
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="verifyBtn" onclick="handleVerify()" class="w-full h-[48px] mt-2 bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded-xl transition-colors duration-200 active:scale-[0.98]">
+                        본인 확인
+                    </button>
                 </div>
                 
-                <div class="h-px bg-gray-100 my-4"></div>
+                <!-- Section 2 (Hidden initially) -->
+                <div id="step2Area" class="space-y-5 hidden">
+                    <div class="h-px bg-gray-100 my-4"></div>
 
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">비밀번호</label>
@@ -127,9 +144,10 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="w-full h-[48px] mt-4 bg-[#1a73e8] hover:bg-[#1557b0] text-white font-semibold rounded-xl transition-colors duration-200 active:scale-[0.98]">
+                <button type="submit" id="submitBtn" class="w-full h-[48px] mt-4 bg-[#1a73e8] hover:bg-[#1557b0] text-white font-semibold rounded-xl transition-colors duration-200 active:scale-[0.98]">
                     회원가입 완료
                 </button>
+                </div>
             </form>
             
             <div class="mt-8 text-center">
@@ -163,17 +181,59 @@
             }
         }
 
-        // 이름 일치 확인 로직 (프론트엔드 모의 구현)
+        // 본인 확인 로직 (프론트엔드 모의 구현)
         const expectedNameMock = "홍길동"; // 테스트를 위한 예상 이름
-        document.getElementById('userName').addEventListener('input', function(e) {
-            const val = e.target.value;
-            const msg = document.getElementById('nameMismatch');
-            if (val.length > 0 && val !== expectedNameMock) {
-                msg.classList.remove('hidden');
-            } else {
-                msg.classList.add('hidden');
+        const expectedCodeMock = "1234";   // 테스트를 위한 예상 인증번호
+        const alreadyVerifiedIdMock = "90001"; // 테스트를 위한 기가입 아이디
+
+        function handleVerify() {
+            const userId = document.getElementById('userId').value;
+            const userName = document.getElementById('userName').value;
+            const authCode = document.getElementById('authCode').value;
+            
+            if (!userId || !userName || !authCode) {
+                alert('학번/교직원 ID, 이름, 초기 인증번호를 모두 입력해 주세요.');
+                return;
             }
-        });
+
+            let hasError = false;
+
+            const idMsg = document.getElementById('alreadyVerifiedMsg');
+            const nameMsg = document.getElementById('nameMismatch');
+            const codeMsg = document.getElementById('codeMismatch');
+
+            idMsg.classList.add('hidden');
+            nameMsg.classList.add('hidden');
+            codeMsg.classList.add('hidden');
+
+            if (userId === alreadyVerifiedIdMock) {
+                idMsg.classList.remove('hidden');
+                hasError = true;
+            }
+
+            if (userName !== expectedNameMock) {
+                nameMsg.classList.remove('hidden');
+                hasError = true;
+            }
+
+            if (authCode !== expectedCodeMock) {
+                codeMsg.classList.remove('hidden');
+                hasError = true;
+            }
+
+            if (!hasError) {
+                document.getElementById('verifyBtn').classList.add('hidden');
+                
+                document.getElementById('userId').disabled = true;
+                document.getElementById('userId').classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+                document.getElementById('userName').disabled = true;
+                document.getElementById('userName').classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+                document.getElementById('authCode').disabled = true;
+                document.getElementById('authCode').classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+
+                document.getElementById('step2Area').classList.remove('hidden');
+            }
+        }
 
         // 비밀번호 실시간 검증
         document.getElementById('password').addEventListener('input', function(e) {
@@ -242,12 +302,8 @@
             
             const pwd = document.getElementById('password').value;
             const pwdConfirm = document.getElementById('passwordConfirm').value;
-            const userName = document.getElementById('userName').value;
             
-            if (userName !== expectedNameMock) {
-                alert('성명이 일치하지 않습니다.');
-                return;
-            }
+            // 이미 본인확인을 거쳤으므로 여기서는 패스워드만 검증합니다.
 
             if (pwd !== pwdConfirm) {
                 alert('비밀번호가 일치하지 않습니다.');
