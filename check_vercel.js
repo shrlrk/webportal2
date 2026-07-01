@@ -11,8 +11,9 @@ https.get('https://dy365.vercel.app/', (res) => {
         let jsData = '';
         jsRes.on('data', d => jsData += d);
         jsRes.on('end', () => {
-          console.log('Includes #3b82f6?', jsData.includes('3b82f6'));
-          console.log('Includes 로그아웃?', jsData.includes('로그아웃'));
+          console.log('Includes [STEP 0]?', jsData.includes('[STEP 0]'));
+          console.log('Includes JS 필터링으로 조회 성공?', jsData.includes('JS 필터링으로 조회 성공'));
+          console.log('Includes 3b82f6 (Logout Blue)?', jsData.includes('3b82f6'));
         });
       });
     } else {
