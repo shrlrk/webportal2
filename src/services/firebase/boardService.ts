@@ -89,15 +89,24 @@ export const createPost = async (postData: Omit<PostData, 'id' | 'createdAt' | '
   try {
     const postsRef = collection(db, POSTS_COLLECTION);
     
-    const cleanData = Object.fromEntries(
-      Object.entries(postData).filter(([_, v]) => v !== undefined)
-    );
+    console.log("Original postData received in createPost:", postData);
 
-    const docRef = await addDoc(postsRef, {
+    const cleanData: any = { ...postData };
+    for (const key in cleanData) {
+      if (cleanData[key] === undefined) {
+        delete cleanData[key];
+      }
+    }
+
+    const payload = {
       ...cleanData,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
-    });
+    };
+    
+    console.log("Final payload for addDoc:", payload);
+
+    const docRef = await addDoc(postsRef, payload);
     return docRef.id;
   } catch (err) {
     console.error('Error creating post:', err);

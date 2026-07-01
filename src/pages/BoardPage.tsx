@@ -207,8 +207,17 @@ const BoardPage: React.FC = () => {
       finalCategory = 'grade';
     }
 
-    if (!finalCategory || (!subCategory && !gradeId)) {
-      alert("게시판 카테고리 정보가 올바르지 않습니다.");
+    console.log("--- [DEBUG: handleSubmit] ---");
+    console.log("URL Params:", { category, subCategory, gradeId });
+    console.log("Resolved values:", { finalCategory, finalSubCategory: subCategory });
+    
+    if (!finalCategory) {
+      alert("게시판 카테고리 정보가 누락되었습니다. (예: grade, subject 등)");
+      return;
+    }
+    
+    if (!subCategory && !gradeId) {
+      alert("세부 게시판 정보가 올바르지 않습니다.");
       return;
     }
 
