@@ -146,10 +146,16 @@ const LoginPage: React.FC = () => {
     const hasLength = newPassword.length >= 8 && newPassword.length <= 16;
     const hasLowercase = /[a-z]/.test(newPassword);
     const hasNumber = /[0-9]/.test(newPassword);
-    const hasSpecial = /[^a-zA-Z0-9]/.test(newPassword);
+    const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?~]/.test(newPassword);
+    const isOnlyAllowedChars = /^[a-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?~]+$/.test(newPassword);
     
     if (!hasLength || !hasLowercase || !hasNumber || !hasSpecial) {
       setError('비밀번호 조건을 모두 만족해야 합니다.');
+      return;
+    }
+
+    if (!isOnlyAllowedChars) {
+      setError('비밀번호는 영문 소문자, 숫자, 허용된 특수문자만 사용할 수 있습니다. (한글, 대문자 등 불가)');
       return;
     }
 
@@ -161,18 +167,10 @@ const LoginPage: React.FC = () => {
       // DB 업데이트
       await completeUserVerification(verifyDocId, userCredential.user.uid);
       
-      alert('최초 인증이 완료되었습니다. 로그인해 주세요.');
+      alert('인증이 완료되었습니다.\n학교생활+에 오신 것을 환영합니다.');
       
-      // 폼 초기화 및 로그인 이동
-      setVerifyId('');
-      setVerifyName('');
-      setExpectedName('');
-      setVerifyCode('');
-      setNewPassword('');
-      setConfirmPassword('');
-      setVerifyStep(1);
-      setAlreadyVerified(false);
-      setTab('login');
+      // 자동 로그인 상태이므로 메인(또는 원래 요청했던) 화면으로 이동
+      navigate(from, { replace: true });
     } catch (err: any) {
       setError('인증 처리 중 오류가 발생했습니다. (서버 연결 실패)');
     }
@@ -346,8 +344,8 @@ const LoginPage: React.FC = () => {
                   <span>숫자 포함</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className={/[^a-zA-Z0-9]/.test(newPassword) ? "text-blue-500 font-bold" : "text-gray-400"}>
-                    {/[^a-zA-Z0-9]/.test(newPassword) ? "☑" : "☐"}
+                  <span className={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?~]/.test(newPassword) ? "text-blue-500 font-bold" : "text-gray-400"}>
+                    {/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?~]/.test(newPassword) ? "☑" : "☐"}
                   </span>
                   <span>특수문자 포함</span>
                 </div>
