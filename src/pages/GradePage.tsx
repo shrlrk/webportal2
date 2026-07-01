@@ -19,8 +19,8 @@ const GradePage: React.FC = () => {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12 flex flex-col items-center flex-grow">
       
       <div className="w-full max-w-4xl text-center mb-10 animate-in fade-in slide-in-from-top-4 duration-500">
-        <h2 className="text-3xl font-bold text-gray-800">{gradeName} 대시보드</h2>
-        <p className="text-gray-500 mt-2">{gradeName}을 위한 안내 및 서비스입니다.</p>
+        <h2 className="text-3xl font-bold text-gray-800">{gradeName}</h2>
+        <p className="text-gray-500 mt-2">공지사항, 학사일정, 자료실, 수강신청을 이용할 수 있습니다.</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full max-w-4xl animate-in fade-in slide-in-from-bottom-5 duration-700 delay-150">

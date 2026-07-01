@@ -501,7 +501,7 @@ const BoardPage: React.FC = () => {
               <div className="flex items-center sm:flex-col gap-2 sm:gap-3 flex-shrink-0">
                 <button 
                   onClick={(e) => post.id && handleToggleFavorite(post.id, e)}
-                  className="p-2 -m-2 text-gray-300 hover:text-yellow-400 transition-colors self-end sm:self-center"
+                  className={`p-2 -m-2 transition-colors self-end sm:self-center ${post.id && favorites.has(post.id) ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'}`}
                   title="즐겨찾기 토글"
                 >
                   <span className="material-symbols-outlined text-[24px]">
