@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   BookOpen, Languages, Calculator, Globe, FlaskConical, Palette, 
+  Music, Dumbbell, Monitor, Wrench, ScrollText,
   CircleDot, Compass, GraduationCap, MessageCircle, Folder,
   HeartHandshake, Stethoscope, Library, Utensils 
 } from 'lucide-react';
@@ -20,9 +21,14 @@ const HomePage: React.FC = () => {
         { title: '국어', icon: BookOpen, path: '/board/subject/korean' },
         { title: '영어', icon: Languages, path: '/board/subject/english' },
         { title: '수학', icon: Calculator, path: '/board/subject/math' },
+        { title: '음악', icon: Music, path: '/board/subject/music' },
+        { title: '체육', icon: Dumbbell, path: '/board/subject/pe' },
         { title: '사회', icon: Globe, path: '/board/subject/social' },
         { title: '과학', icon: FlaskConical, path: '/board/subject/science' },
-        { title: '예체능', icon: Palette, path: '/board/subject/arts' },
+        { title: '외국어', icon: Languages, path: '/board/subject/foreign' },
+        { title: '정보', icon: Monitor, path: '/board/subject/it' },
+        { title: '기술가정', icon: Wrench, path: '/board/subject/tech' },
+        { title: '한문', icon: ScrollText, path: '/board/subject/hanja' },
       ]
     },
     { 
@@ -64,13 +70,11 @@ const HomePage: React.FC = () => {
   ];
 
   const getGridCols = (length: number) => {
-    switch(length) {
-      case 6: return 'md:grid-cols-6';
-      case 5: return 'md:grid-cols-5';
-      case 4: return 'md:grid-cols-4';
-      case 3: return 'md:grid-cols-3';
-      default: return 'md:grid-cols-4';
-    }
+    if (length >= 6) return 'md:grid-cols-6';
+    if (length === 5) return 'md:grid-cols-5';
+    if (length === 4) return 'md:grid-cols-4';
+    if (length === 3) return 'md:grid-cols-3';
+    return 'md:grid-cols-4';
   };
 
   const handleMenuClick = (id: number) => {
