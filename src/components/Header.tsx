@@ -92,26 +92,8 @@ const Header: React.FC = () => {
                 ) : (
                   <>
                     <button onClick={() => handleMenuClick(() => alertPlaceholder('내 정보'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">내 정보</button>
-                    
-                    {currentUser.role === 'student' && (
-                      <button onClick={() => handleMenuClick(() => alertPlaceholder('내 신청내역'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">내 신청내역</button>
-                    )}
-                    
-                    {currentUser.role === 'teacher' && (
-                      <>
-                        <button onClick={() => handleMenuClick(() => alertPlaceholder('내가 작성한 글'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">내가 작성한 글</button>
-                        <button onClick={() => handleMenuClick(() => alertPlaceholder('신청 관리'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">신청 관리</button>
-                      </>
-                    )}
-                    
-                    {currentUser.role === 'admin' && (
-                      <>
-                        <button onClick={() => handleMenuClick(() => alertPlaceholder('교사 업무'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">교사 업무</button>
-                        <button onClick={() => handleMenuClick(() => alertPlaceholder('시스템 관리'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">시스템 관리</button>
-                      </>
-                    )}
-                    
-                    <button onClick={() => handleMenuClick(() => alertPlaceholder('즐겨찾기 목록'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">즐겨찾기 목록</button>
+                    <button onClick={() => handleMenuClick(() => alertPlaceholder('내가 작성한 글'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">내가 작성한 글</button>
+                    <button onClick={() => handleMenuClick(() => alertPlaceholder('신청관리'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">신청관리</button>
                     
                     <div className="border-t border-gray-100 my-1"></div>
                     <button onClick={handleAuthAction} className="w-full text-left px-4 py-2.5 text-sm text-blue-500 hover:bg-blue-50 transition-colors font-medium" style={{ color: '#3b82f6' }}>로그아웃</button>
