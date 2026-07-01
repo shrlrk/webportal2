@@ -54,7 +54,22 @@ const LoginPage: React.FC = () => {
     setError('');
     setLoading(true);
     try {
-      await loginWithUserIdAndPassword(loginId, loginPassword);
+      const trimmedId = loginId.trim();
+      const result = await getUserByUserId(trimmedId);
+
+      if (!result) {
+        setError('등록되지 않은 아이디입니다.');
+        setLoading(false);
+        return;
+      }
+
+      if (result.data.passwordSet !== true) {
+        setError('최초 인증이 필요합니다.\n처음 이용하시는 경우 최초 인증을 먼저 진행해 주세요.');
+        setLoading(false);
+        return;
+      }
+
+      await loginWithUserIdAndPassword(trimmedId, loginPassword);
       navigate(from, { replace: true });
     } catch (err: any) {
       setError('아이디 또는 비밀번호를 다시 확인해 주세요.');
@@ -174,8 +189,8 @@ const LoginPage: React.FC = () => {
 
 
         {error && (
-          <div className={`mb-6 text-[13px] py-3 px-4 rounded-xl font-medium leading-relaxed ${
-            tab === 'login' ? 'bg-gray-50 text-gray-600 text-left' : 'bg-red-50 text-red-500 text-center whitespace-pre-wrap'
+          <div className={`mb-6 text-[13px] py-3 px-4 rounded-xl font-medium leading-relaxed whitespace-pre-wrap ${
+            tab === 'login' ? 'bg-gray-50 text-gray-600 text-left' : 'bg-red-50 text-red-500 text-center'
           }`}>
             <p>{error}</p>
             {tab === 'login' && (
