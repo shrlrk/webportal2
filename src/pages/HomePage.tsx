@@ -1,15 +1,83 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  BookOpen, Languages, Calculator, Globe, FlaskConical, Palette, 
+  CircleDot, Compass, GraduationCap, MessageCircle, Folder,
+  HeartHandshake, Stethoscope, Library, Utensils 
+} from 'lucide-react';
 
 const HomePage: React.FC = () => {
+  const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
+  const navigate = useNavigate();
+
   const menus = [
-    { id: 1, title: '교과', icon: 'menu_book', path: '/board' },
-    { id: 2, title: '학년', icon: 'groups', path: '/board' },
-    { id: 3, title: '진로', icon: 'explore', path: '/board' },
-    { id: 4, title: '학생지원', icon: 'school', path: '/board' }
+    { 
+      id: 1, 
+      title: '교과', 
+      icon: 'menu_book', 
+      path: '/board',
+      submenus: [
+        { title: '국어', icon: BookOpen, path: '/board/subject/korean' },
+        { title: '영어', icon: Languages, path: '/board/subject/english' },
+        { title: '수학', icon: Calculator, path: '/board/subject/math' },
+        { title: '사회', icon: Globe, path: '/board/subject/social' },
+        { title: '과학', icon: FlaskConical, path: '/board/subject/science' },
+        { title: '예체능', icon: Palette, path: '/board/subject/arts' },
+      ]
+    },
+    { 
+      id: 2, 
+      title: '학년', 
+      icon: 'groups', 
+      path: '/board',
+      submenus: [
+        { title: '1학년', icon: CircleDot, path: '/board/grade/1' },
+        { title: '2학년', icon: CircleDot, path: '/board/grade/2' },
+        { title: '3학년', icon: CircleDot, path: '/board/grade/3' },
+      ]
+    },
+    { 
+      id: 3, 
+      title: '진로', 
+      icon: 'explore', 
+      path: '/board',
+      submenus: [
+        { title: '진로정보', icon: Compass, path: '/board/career/info' },
+        { title: '대학정보', icon: GraduationCap, path: '/board/career/university' },
+        { title: '학과정보', icon: BookOpen, path: '/board/career/department' },
+        { title: '상담신청', icon: MessageCircle, path: '/board/career/counseling' },
+        { title: '자료실', icon: Folder, path: '/board/career/resources' },
+      ]
+    },
+    { 
+      id: 4, 
+      title: '학생지원', 
+      icon: 'school', 
+      path: '/board',
+      submenus: [
+        { title: 'Wee클래스', icon: HeartHandshake, path: '/board/support/wee' },
+        { title: '보건실', icon: Stethoscope, path: '/board/support/health' },
+        { title: '꿈마루도서관', icon: Library, path: '/board/support/library' },
+        { title: '학생식당', icon: Utensils, path: '/board/support/cafeteria' },
+      ]
+    }
   ];
 
-  const navigate = useNavigate();
+  const getGridCols = (length: number) => {
+    switch(length) {
+      case 6: return 'md:grid-cols-6';
+      case 5: return 'md:grid-cols-5';
+      case 4: return 'md:grid-cols-4';
+      case 3: return 'md:grid-cols-3';
+      default: return 'md:grid-cols-4';
+    }
+  };
+
+  const handleMenuClick = (id: number) => {
+    setActiveMenuId(activeMenuId === id ? null : id);
+  };
+
+  const activeMenu = menus.find(m => m.id === activeMenuId);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12 flex flex-col items-center flex-grow">
@@ -35,16 +103,48 @@ const HomePage: React.FC = () => {
         {menus.map((menu) => (
           <button
             key={menu.id}
-            onClick={() => navigate(menu.path)}
-            className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-6 md:p-8 hover:shadow-md hover:border-gray-300 transition-all duration-300 group"
+            onClick={() => handleMenuClick(menu.id)}
+            className={`flex flex-col items-center justify-center bg-white border rounded-2xl p-6 md:p-8 hover:shadow-md transition-all duration-300 group ${
+              activeMenuId === menu.id 
+                ? 'border-blue-500 ring-2 ring-blue-50 shadow-sm transform -translate-y-1' 
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
           >
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-gray-50 border border-gray-100 transition-transform duration-300 group-hover:scale-110">
-              <span className="material-symbols-outlined text-3xl text-gray-600">{menu.icon}</span>
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 border transition-transform duration-300 group-hover:scale-110 ${
+              activeMenuId === menu.id ? 'bg-blue-50 border-blue-100 text-blue-600' : 'bg-gray-50 border-gray-100 text-gray-600'
+            }`}>
+              <span className="material-symbols-outlined text-3xl">{menu.icon}</span>
             </div>
-            <span className="text-base md:text-lg font-semibold text-gray-700">{menu.title}</span>
+            <span className={`text-base md:text-lg font-semibold ${
+              activeMenuId === menu.id ? 'text-blue-600' : 'text-gray-700'
+            }`}>{menu.title}</span>
           </button>
         ))}
       </div>
+
+      {/* Submenus Area */}
+      {activeMenu && (
+        <div className="w-full max-w-4xl mt-6 animate-in slide-in-from-top-4 fade-in duration-300">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <div className={`grid grid-cols-2 ${getGridCols(activeMenu.submenus.length)} gap-3 sm:gap-4`}>
+              {activeMenu.submenus.map((sub, idx) => {
+                const Icon = sub.icon;
+                return (
+                  <button 
+                    key={idx}
+                    onClick={() => navigate(sub.path)}
+                    className="flex flex-col items-center justify-center p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all group min-h-[100px]"
+                  >
+                    <Icon className="w-6 h-6 text-gray-500 mb-2 group-hover:text-blue-500 transition-colors" strokeWidth={1.5} />
+                    <span className="text-[13px] sm:text-sm font-medium text-gray-700 group-hover:text-gray-900 break-keep">{sub.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
