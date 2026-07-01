@@ -6,6 +6,7 @@
     <title>로그인 - 학교생활+</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <style>
         body {
@@ -46,7 +47,12 @@
                 </div>
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">비밀번호</label>
-                    <input type="password" id="password" required class="w-full h-[48px] px-4 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="비밀번호를 입력하세요">
+                    <div class="relative">
+                        <input type="password" id="password" required class="w-full h-[48px] pl-4 pr-12 rounded-xl border border-gray-200 focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] outline-none transition-all placeholder:text-gray-400" placeholder="비밀번호를 입력하세요">
+                        <button type="button" onclick="togglePasswordVisibility('password', 'togglePwdIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 focus:outline-none flex items-center justify-center" tabindex="-1">
+                            <span id="togglePwdIcon" class="material-symbols-outlined text-[20px]">visibility_off</span>
+                        </button>
+                    </div>
                 </div>
                 
                 <button type="submit" class="w-full h-[48px] mt-2 bg-[#1a73e8] hover:bg-[#1557b0] text-white font-semibold rounded-xl transition-colors duration-200 active:scale-[0.98]">
@@ -71,6 +77,18 @@
     </footer>
 
     <script>
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility_off';
+            }
+        }
+
         function handleLogin(event) {
             event.preventDefault();
             // 데모용으로 로그인 시 바로 index.html로 이동
