@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   BookOpen, Languages, Calculator, Globe, FlaskConical, Palette, 
   Music, Dumbbell, Monitor, Wrench, ScrollText,
   CircleDot, Compass, GraduationCap, MessageCircle, Folder,
-  HeartHandshake, Stethoscope, Library, Utensils 
+  HeartHandshake, Stethoscope, Library, Utensils, Megaphone 
 } from 'lucide-react';
+import { getPosts } from '../services/firebase/boardService';
+import { PostData } from '../types';
 
 const HomePage: React.FC = () => {
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
+  const [mainNotices, setMainNotices] = useState<PostData[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getPosts(undefined, undefined, undefined, true).then(setMainNotices);
+  }, []);
 
   const menus = [
     { 
@@ -87,7 +94,7 @@ const HomePage: React.FC = () => {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12 flex flex-col items-center flex-grow">
       
       {/* Search Bar Section */}
-      <div className="w-full max-w-2xl mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 mt-4">
+      <div className="w-full max-w-2xl mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 mt-4">
         <div className="relative group flex items-center">
           <div className="absolute left-5 flex items-center justify-center pointer-events-none">
             <span className="material-symbols-outlined text-gray-400 group-hover:text-blue-500 transition-colors text-2xl">search</span>
@@ -101,6 +108,28 @@ const HomePage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Main Notice Section */}
+      {mainNotices.length > 0 && (
+        <div className="w-full max-w-4xl mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-75">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4 ml-1">
+              <Megaphone className="w-5 h-5 text-red-500" />
+              <h3 className="text-lg font-bold text-gray-800">주요 공지사항</h3>
+            </div>
+            <div className="flex flex-col gap-2">
+              {mainNotices.map((notice) => (
+                <div key={notice.id} className="flex justify-between items-center py-2 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+                  <span className="text-gray-700 font-medium line-clamp-1">{notice.title}</span>
+                  <span className="text-sm text-gray-400 whitespace-nowrap ml-4">
+                    {notice.createdAt?.toLocaleDateString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Menus */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full max-w-4xl animate-in fade-in slide-in-from-bottom-5 duration-700 delay-150">

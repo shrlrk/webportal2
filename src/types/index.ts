@@ -21,6 +21,10 @@ export interface PostData {
   id?: string;
   title: string;
   content: string;
+  category?: string;
+  subCategory?: string;
+  grade?: string;
+  isMainNotice?: boolean;
   authorId: string; // internalId
   authorUserId: string; // userId
   authorName: string;

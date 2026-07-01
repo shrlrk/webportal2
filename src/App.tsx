@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import PasswordSetupPage from './pages/PasswordSetupPage';
 import BoardPage from './pages/BoardPage';
+import GradePage from './pages/GradePage';
 import { useAuth } from './contexts/AuthContext';
 
 const App: React.FC = () => {
@@ -22,7 +23,10 @@ const App: React.FC = () => {
       {/* Public Routes with Layout */}
       <Route path="/" element={<Layout><Outlet /></Layout>}>
         <Route index element={<HomePage />} />
-        <Route path="board" element={<BoardPage />} />
+        <Route path="board/:category/:subCategory" element={<BoardPage />} />
+        <Route path="board" element={<BoardPage />} /> {/* 기본 라우트 유지 */}
+        <Route path="grade/:gradeId" element={<GradePage />} />
+        <Route path="grade/:gradeId/board/:subCategory" element={<BoardPage />} />
       </Route>
     </Routes>
   );
