@@ -8,6 +8,8 @@ import { Edit2, Trash2, Lock, MessageSquare, CheckCircle } from 'lucide-react';
 interface ApplicationBoardProps {
   department: string;
   subCategory: string;
+  departmentName?: string;
+  menuTitle?: string;
   topContent?: React.ReactNode;
 }
 
@@ -23,7 +25,7 @@ const getStatusColor = (status?: string) => {
   }
 };
 
-const ApplicationBoard: React.FC<ApplicationBoardProps> = ({ department, subCategory, topContent }) => {
+const ApplicationBoard: React.FC<ApplicationBoardProps> = ({ department, subCategory, departmentName, menuTitle, topContent }) => {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState<PostData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -158,7 +160,10 @@ const ApplicationBoard: React.FC<ApplicationBoardProps> = ({ department, subCate
 
   if (viewMode === 'write') {
     return (
-      <BoardLayout title="신청서 작성" breadcrumb="신청형 게시판" onGoBack={closeView} narrow={true} topContent={topContent}>
+      <BoardLayout 
+        title={menuTitle || "신청 게시판"} 
+        breadcrumb={departmentName && menuTitle ? `학생지원 > ${departmentName} > ${menuTitle}` : "신청형 게시판"} 
+        onGoBack={closeView} narrow={true} topContent={topContent}>
         <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 flex flex-col shadow-sm">
           <div className="mb-4 p-4 bg-blue-50 text-blue-800 rounded-xl text-sm flex items-start gap-2">
             <Lock className="w-5 h-5 flex-shrink-0 mt-0.5" />
@@ -198,7 +203,10 @@ const ApplicationBoard: React.FC<ApplicationBoardProps> = ({ department, subCate
     }, [selectedPost]);
 
     return (
-      <BoardLayout title="신청 상세" breadcrumb="신청형 게시판" onGoBack={closeView} narrow={true} topContent={topContent}>
+      <BoardLayout 
+        title={menuTitle || "신청 상세"} 
+        breadcrumb={departmentName && menuTitle ? `학생지원 > ${departmentName} > ${menuTitle}` : "신청형 게시판"} 
+        onGoBack={closeView} narrow={true} topContent={topContent}>
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
           <div className="p-6 border-b border-gray-100 bg-gray-50/50">
             <div className="flex justify-between items-start mb-4">
@@ -287,8 +295,8 @@ const ApplicationBoard: React.FC<ApplicationBoardProps> = ({ department, subCate
   // List View
   return (
     <BoardLayout
-      title="신청 게시판"
-      breadcrumb="신청형 게시판"
+      title={menuTitle || "신청 게시판"}
+      breadcrumb={departmentName && menuTitle ? `학생지원 > ${departmentName} > ${menuTitle}` : "신청형 게시판"}
       showSearch={true}
       searchKeyword={searchKeyword}
       onSearchChange={setSearchKeyword}

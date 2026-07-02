@@ -4,10 +4,12 @@ import { SUPPORT_MENUS } from '../constants/serviceMenus';
 import BoardPage from './BoardPage';
 import ApplicationBoard from '../components/ApplicationBoard/ApplicationBoard';
 import CalendarService from '../components/CalendarService/CalendarService';
+import { useAuth } from '../contexts/AuthContext';
 
 const SupportDepartmentPage: React.FC = () => {
   const { department } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const config = SUPPORT_MENUS[department || ''];
 
   const [activeTab, setActiveTab] = useState(config?.menus[0]?.id || '');
@@ -25,28 +27,6 @@ const SupportDepartmentPage: React.FC = () => {
   if (!config) return null;
 
   const activeMenu = config.menus.find(m => m.id === activeTab) || config.menus[0];
-
-  // 상단 탭 UI는 제거하지 말고, 학생지원에서는 사용하지 않도록 처리합니다.
-  // const renderTabs = () => (
-  //   <div className="flex flex-col">
-  //     <h1 className="text-3xl font-bold text-gray-900 mb-6">{config.title}</h1>
-  //     <div className="flex overflow-x-auto border-b border-gray-200 gap-6 hide-scrollbar">
-  //       {config.menus.map(menu => (
-  //         <button
-  //           key={menu.id}
-  //           onClick={() => setActiveTab(menu.id)}
-  //           className={`whitespace-nowrap py-3 font-semibold text-[15px] sm:text-base border-b-2 transition-colors duration-300 px-1 ${
-  //             activeTab === menu.id 
-  //               ? 'border-blue-500 text-blue-600' 
-  //               : 'border-transparent text-gray-500 hover:text-gray-800'
-  //           }`}
-  //         >
-  //           {menu.title}
-  //         </button>
-  //       ))}
-  //     </div>
-  //   </div>
-  // );
 
   const renderCards = () => (
     <div className="flex flex-col animate-in fade-in slide-in-from-top-4 duration-300 mb-4">
@@ -75,22 +55,52 @@ const SupportDepartmentPage: React.FC = () => {
     </div>
   );
 
+  const renderPlaceholder = (message: string) => (
+    <div>
+      {renderCards()}
+      <div className="bg-white rounded-2xl border border-gray-200 py-20 text-center text-gray-500 shadow-sm">
+        {message}
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
+    if (activeMenu.id === 'search') {
+      return renderPlaceholder("도서검색 기능은 준비 중입니다.");
+    }
+    if (activeMenu.id === 'newbooks') {
+      return renderPlaceholder("신착도서 안내 기능은 준비 중입니다.");
+    }
+    if (activeMenu.id === 'diet') {
+      const isTeacher = currentUser?.role === 'teacher' || currentUser?.role === 'admin';
+      return renderPlaceholder(isTeacher ? "월간 식단 업로드 기능은 준비 중입니다." : "월간 식단 기능은 준비 중입니다.");
+    }
+
     switch (activeMenu.type) {
       case 'BOARD':
         return (
           <BoardPage 
             category="support" 
             subCategory={activeMenu.id} 
+            departmentName={config.title}
+            menuTitle={activeMenu.title}
             topContent={renderCards()} 
           />
         );
       case 'APPLICATION':
-        return <ApplicationBoard department={department!} subCategory={activeMenu.id} topContent={renderCards()} />;
+        return (
+          <ApplicationBoard 
+            department={department!} 
+            subCategory={activeMenu.id} 
+            departmentName={config.title}
+            menuTitle={activeMenu.title}
+            topContent={renderCards()} 
+          />
+        );
       case 'CALENDAR':
         return <CalendarService department={department!} subCategory={activeMenu.id} topContent={renderCards()} />;
       default:
-        return <div>준비 중입니다.</div>;
+        return renderPlaceholder("준비 중입니다.");
     }
   };
 

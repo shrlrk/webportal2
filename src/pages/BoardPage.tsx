@@ -14,6 +14,8 @@ interface BoardPageProps {
   category?: string;
   subCategory?: string;
   gradeId?: string;
+  departmentName?: string;
+  menuTitle?: string;
   topContent?: React.ReactNode;
 }
 
@@ -22,7 +24,7 @@ const BoardPage: React.FC<BoardPageProps> = (props) => {
   const category = props.category || params.category;
   const subCategory = props.subCategory || params.subCategory;
   const gradeId = props.gradeId || params.gradeId;
-  const topContent = props.topContent;
+  const { departmentName, menuTitle, topContent } = props;
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -71,12 +73,15 @@ const BoardPage: React.FC<BoardPageProps> = (props) => {
     }
   };
 
-  const subTitle = subCategory ? (subTitleMap[subCategory] || subCategory) : '';
+  const subTitle = menuTitle || (subCategory ? (subTitleMap[subCategory] || subCategory) : '');
 
   if (gradeId) {
     breadcrumb = `학년 > ${gradeId}학년`;
     if (subTitle) breadcrumb += ` > ${subTitle}`;
     mainTitle = subTitle || `${gradeId}학년`;
+  } else if (category === 'support' && departmentName) {
+    breadcrumb = `학생지원 > ${departmentName} > ${subTitle}`;
+    mainTitle = subTitle;
   } else if (category && subTitle) {
     const catName = getCategoryName(category);
     breadcrumb = `${catName} > ${subTitle}`;
