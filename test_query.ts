@@ -1,28 +1,7 @@
-import { db } from './src/services/firebase/firebase';
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs, query, limit } from 'firebase/firestore';
 
-const run = async () => {
-  console.log("1. Checking S000001 directly...");
-  const docRef = doc(db, 'users', 'S000001');
-  const snap = await getDoc(docRef);
-  if (snap.exists()) {
-    console.log("S000001 Data:");
-    console.dir(snap.data());
-  } else {
-    console.log("S000001 does not exist!");
-  }
-
-  console.log("\n2. Querying where userId == '10101'");
-  const usersRef = collection(db, 'users');
-  const q = query(usersRef, where('userId', '==', '10101'));
-  const querySnap = await getDocs(q);
-  console.log(`Query size: ${querySnap.size}`);
-  querySnap.forEach(d => {
-    console.log(`Found doc id: ${d.id}`);
-    console.dir(d.data());
-  });
-
-  process.exit(0);
-};
-
-run();
+// To avoid messing up with imports, I'll just read the firebase config manually or use the existing compiled code.
+// Actually, since I have `npm run build`, maybe I can just execute a script via ts-node or similar.
+// Let's just output the first user in the users collection.
+import { firebaseConfig } from './src/services/firebase/firebase'; // wait, it might not be exported.
