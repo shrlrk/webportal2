@@ -3,12 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { 
   BookOpen, Languages, Calculator, Globe, Globe2, FlaskConical, Palette, 
   Music, Dumbbell, Monitor, Wrench, ScrollText, BookOpenText, Type, Hammer,
+  ALargeSmall,
   CircleDot, Compass, GraduationCap, MessageCircle, Folder,
   HeartHandshake, Stethoscope, Library, Utensils, Megaphone 
 } from 'lucide-react';
 import { getPosts } from '../services/firebase/boardService';
 import { PostData } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+
+const HanjaIcon = ({ className = "w-6 h-6", strokeWidth = 1.5, ...props }: any) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth={strokeWidth} 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className} 
+    {...props}
+  >
+    <text x="50%" y="54%" dominantBaseline="middle" textAnchor="middle" fontSize="16" strokeWidth="0.5">漢</text>
+  </svg>
+);
 
 const HomePage: React.FC = () => {
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
@@ -27,7 +44,7 @@ const HomePage: React.FC = () => {
       path: '/board',
       submenus: [
         { title: '국어', icon: BookOpen, path: '/board/subject/korean' },
-        { title: '영어', icon: Type, path: '/board/subject/english' },
+        { title: '영어', icon: ALargeSmall, path: '/board/subject/english' },
         { title: '수학', icon: Calculator, path: '/board/subject/math' },
         { title: '음악', icon: Music, path: '/board/subject/music' },
         { title: '체육', icon: Dumbbell, path: '/board/subject/pe' },
@@ -36,7 +53,7 @@ const HomePage: React.FC = () => {
         { title: '외국어', icon: Globe2, path: '/board/subject/foreign' },
         { title: '정보', icon: Monitor, path: '/board/subject/it' },
         { title: '기술가정', icon: Hammer, path: '/board/subject/tech' },
-        { title: '한문', icon: Languages, path: '/board/subject/hanja' },
+        { title: '한문', icon: HanjaIcon, path: '/board/subject/hanja' },
       ]
     },
     { 
@@ -130,18 +147,18 @@ const HomePage: React.FC = () => {
       {/* Main Notice Section */}
       {mainNotices.length > 0 && (
         <div className="w-full max-w-4xl mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-75">
-          <div className="bg-white rounded-2xl border border-gray-200 py-1.5 px-5 shadow-sm">
-            <div className="flex items-center gap-2 mb-1 ml-1">
+          <div className="bg-white rounded-2xl border border-gray-200 py-3 px-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-2.5 ml-1">
               <Megaphone className="w-5 h-5 text-red-500" />
             </div>
-            <div className="flex flex-col gap-0">
+            <div className="flex flex-col gap-1.5">
               {mainNotices.map((notice) => (
                 <div 
                   key={notice.id} 
                   onClick={() => handleNoticeClick(notice)}
                   className="flex justify-between items-center py-1 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
                 >
-                  <span className="text-gray-700 font-medium line-clamp-1">
+                  <span className="text-gray-700 font-medium line-clamp-1 leading-[1.4]">
                     {notice.title}
                   </span>
                   <span className="text-sm text-gray-400 whitespace-nowrap ml-4">

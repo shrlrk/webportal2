@@ -33,12 +33,12 @@ const Footer: React.FC = () => {
   return (
     <>
       <footer className="bg-white border-t border-gray-100 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-wrap justify-between items-center gap-4 text-sm text-gray-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-wrap justify-start items-center gap-x-6 gap-y-3 text-sm text-gray-500">
           <div 
             className="font-medium"
             style={{ display: 'inline-block', whiteSpace: 'nowrap', wordBreak: 'keep-all', overflowWrap: 'normal' }}
           >
-            © 2026 대영고등학교 | Developed by 이순옥
+            대영고등학교 학교생활+
           </div>
           <div 
             className="flex flex-wrap items-center gap-x-6 gap-y-3"
