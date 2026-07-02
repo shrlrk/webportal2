@@ -33,18 +33,42 @@ const Footer: React.FC = () => {
   return (
     <>
       <footer className="bg-white border-t border-gray-100 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-          <div className="font-medium whitespace-nowrap">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-wrap justify-between items-center gap-4 text-sm text-gray-500">
+          <div 
+            className="font-medium"
+            style={{ display: 'inline-block', whiteSpace: 'nowrap', wordBreak: 'keep-all', overflowWrap: 'normal' }}
+          >
             © 2026 대영고등학교 | Developed by 이순옥
           </div>
           <div 
-            className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3"
-            style={{ wordBreak: 'keep-all', overflowWrap: 'normal' }}
+            className="flex flex-wrap items-center gap-x-6 gap-y-3"
           >
-            <button className="hover:text-gray-800 transition-colors whitespace-nowrap">문의하기</button>
-            <button onClick={() => openModal('이용약관', termsRaw)} className="hover:text-gray-800 transition-colors whitespace-nowrap">이용약관</button>
-            <button onClick={() => openModal('개인정보처리방침', privacyRaw)} className="hover:text-gray-800 transition-colors font-medium whitespace-nowrap">개인정보처리방침</button>
-            <button className="hover:text-gray-800 transition-colors whitespace-nowrap">시스템관리</button>
+            <button 
+              className="hover:text-gray-800 transition-colors"
+              style={{ display: 'inline-block', whiteSpace: 'nowrap', wordBreak: 'keep-all', overflowWrap: 'normal' }}
+            >
+              문의하기
+            </button>
+            <button 
+              onClick={() => openModal('이용약관', termsRaw)} 
+              className="hover:text-gray-800 transition-colors"
+              style={{ display: 'inline-block', whiteSpace: 'nowrap', wordBreak: 'keep-all', overflowWrap: 'normal' }}
+            >
+              이용약관
+            </button>
+            <button 
+              onClick={() => openModal('개인정보처리방침', privacyRaw)} 
+              className="hover:text-gray-800 transition-colors font-medium"
+              style={{ display: 'inline-block', whiteSpace: 'nowrap', wordBreak: 'keep-all', overflowWrap: 'normal' }}
+            >
+              개인정보처리방침
+            </button>
+            <button 
+              className="hover:text-gray-800 transition-colors"
+              style={{ display: 'inline-block', whiteSpace: 'nowrap', wordBreak: 'keep-all', overflowWrap: 'normal' }}
+            >
+              시스템관리
+            </button>
           </div>
         </div>
       </footer>

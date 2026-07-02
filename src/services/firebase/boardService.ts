@@ -70,8 +70,10 @@ export const getPosts = async (
     });
 
     if (showOnMainOnly) {
-      // 최대 5개까지만 노출
-      fetchedPosts = fetchedPosts.slice(0, 5);
+      // 종료일 없음 공지는 메인에서는 표시하지 않습니다.
+      fetchedPosts = fetchedPosts.filter(p => !p.noEndDate);
+      // 최대 3개까지만 노출
+      fetchedPosts = fetchedPosts.slice(0, 3);
     }
 
     return fetchedPosts;
