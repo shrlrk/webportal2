@@ -10,6 +10,7 @@ export interface UserData {
   grade?: number;
   classNumber?: number;
   studentNumber?: number;
+  teacherNumber?: number;
   oneTimeCode?: string;
   passwordSet: boolean;
   isActive: boolean;

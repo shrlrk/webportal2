@@ -141,9 +141,15 @@ const Header: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <div className="px-4 py-2 border-b border-gray-100 mb-1">
-                        <div className="text-blue-500 text-xs font-semibold">#{currentUser.userId}</div>
-                      </div>
+                      {(() => {
+                        const displayId = currentUser.role === 'student' ? currentUser.studentNumber : currentUser.teacherNumber;
+                        if (!displayId) return null;
+                        return (
+                          <div className="px-4 py-2 border-b border-gray-100 mb-1">
+                            <div className="text-blue-500 text-xs font-semibold">#{displayId}</div>
+                          </div>
+                        );
+                      })()}
                       <button onClick={() => handleMenuClick(() => setIsPasswordModalOpen(true))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">비밀번호 변경</button>
                       <button onClick={() => handleMenuClick(() => alertPlaceholder('내가 작성한 글'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">내가 작성한 글</button>
                       <button onClick={() => handleMenuClick(() => alertPlaceholder('신청관리'))} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">신청관리</button>
