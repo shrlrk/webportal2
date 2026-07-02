@@ -4,6 +4,7 @@ import { SUPPORT_MENUS } from '../constants/serviceMenus';
 import BoardPage from './BoardPage';
 import ApplicationBoard from '../components/ApplicationBoard/ApplicationBoard';
 import CalendarService from '../components/CalendarService/CalendarService';
+import ProgramRegistrationBoard from '../components/ProgramRegistration/ProgramRegistrationBoard';
 import { useAuth } from '../contexts/AuthContext';
 
 const SupportDepartmentPage: React.FC = () => {
@@ -74,6 +75,15 @@ const SupportDepartmentPage: React.FC = () => {
     if (activeMenu.id === 'diet') {
       const isTeacher = currentUser?.role === 'teacher' || currentUser?.role === 'admin';
       return renderPlaceholder(isTeacher ? "월간 식단 업로드 기능은 준비 중입니다." : "월간 식단 기능은 준비 중입니다.");
+    }
+    if (activeMenu.id === 'program') {
+      return (
+        <ProgramRegistrationBoard 
+          departmentName={config.title}
+          menuTitle={activeMenu.title}
+          topContent={renderCards()} 
+        />
+      );
     }
 
     switch (activeMenu.type) {

@@ -64,3 +64,31 @@ export interface CalendarData {
   updatedAt: any;
 }
 
+
+export interface LibraryProgram {
+  id?: string;
+  title: string;
+  applyStartDate: string; // "YYYY-MM-DD"
+  applyEndDate: string;   // "YYYY-MM-DD"
+  eventDate: string;
+  location: string;
+  targetGrade: string;
+  maxParticipants: number;
+  currentParticipants: number;
+  content: string;
+  status: '접수중' | '마감';
+  authorId: string;
+  authorName: string;
+  createdAt: any;
+  updatedAt: any;
+}
+
+export interface LibraryProgramApplication {
+  id?: string;
+  programId: string;
+  studentId: string;
+  studentUserId: string;
+  studentName: string;
+  studentGrade?: number;
+  appliedAt: any;
+}
