@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   BookOpen, Languages, Calculator, Globe, Globe2, FlaskConical, Palette, 
   Music, Dumbbell, Monitor, Wrench, ScrollText, BookOpenText, Type, Hammer,
-  ALargeSmall,
+  CaseSensitive,
   CircleDot, Compass, GraduationCap, MessageCircle, Folder,
   HeartHandshake, Stethoscope, Library, Utensils, Megaphone 
 } from 'lucide-react';
@@ -44,7 +44,7 @@ const HomePage: React.FC = () => {
       path: '/board',
       submenus: [
         { title: '국어', icon: BookOpen, path: '/board/subject/korean' },
-        { title: '영어', icon: ALargeSmall, path: '/board/subject/english' },
+        { title: '영어', icon: CaseSensitive, path: '/board/subject/english' },
         { title: '수학', icon: Calculator, path: '/board/subject/math' },
         { title: '음악', icon: Music, path: '/board/subject/music' },
         { title: '체육', icon: Dumbbell, path: '/board/subject/pe' },
