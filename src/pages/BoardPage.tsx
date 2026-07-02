@@ -299,6 +299,17 @@ const BoardPage: React.FC = () => {
       >
         <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 flex-grow flex flex-col shadow-sm">
           
+          {/* 제목 */}
+          <div className="mb-6">
+            <input 
+              type="text" 
+              placeholder="제목을 입력하세요..." 
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full text-xl font-bold border-b border-gray-200 pb-3 outline-none focus:border-blue-500 transition-colors bg-transparent"
+            />
+          </div>
+
           {/* 옵션 */}
           {(currentUser?.role === 'admin' || currentUser?.role === 'teacher') && (
             <div className="mb-6 p-5 border border-gray-100 rounded-xl bg-white shadow-sm flex flex-col gap-4">
@@ -421,7 +432,18 @@ const BoardPage: React.FC = () => {
               )}
             </div>
             
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">{selectedPost.title}</h1>
+            <div className="flex justify-between items-start gap-4 mb-4">
+              <h1 className="text-2xl font-bold text-gray-900">{selectedPost.title}</h1>
+              <button 
+                onClick={(e) => selectedPost.id && handleToggleFavorite(selectedPost.id, e)}
+                className={`flex-shrink-0 p-2 -m-2 transition-colors ${selectedPost.id && favorites.has(selectedPost.id) ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'}`}
+                title="즐겨찾기 토글"
+              >
+                <span className="material-symbols-outlined text-[28px]">
+                  {selectedPost.id && favorites.has(selectedPost.id) ? 'star' : 'star_border'}
+                </span>
+              </button>
+            </div>
             <div className="flex flex-wrap justify-between items-center gap-4 text-sm text-gray-500">
               <div className="flex items-center gap-3">
                 <span className="font-semibold text-gray-700">{selectedPost.authorName}</span>
