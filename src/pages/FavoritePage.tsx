@@ -6,6 +6,52 @@ import { getPosts } from '../services/firebase/boardService';
 import { PostData } from '../types';
 import BoardLayout from '../components/BoardLayout';
 
+const categoryNameMap: Record<string, string> = {
+  subject: '교과',
+  grade: '학년',
+  career: '진로',
+  support: '학생지원'
+};
+
+const subCategoryNameMap: Record<string, string> = {
+  korean: '국어',
+  english: '영어',
+  math: '수학',
+  music: '음악',
+  pe: '체육',
+  social: '사회',
+  science: '과학',
+  foreign: '외국어',
+  it: '정보',
+  tech: '기술가정',
+  hanja: '한문',
+  
+  info: '진로정보',
+  university: '대학정보',
+  department: '학과정보',
+  counseling: '상담신청',
+  resources: '자료실',
+  
+  wee: 'Wee클래스',
+  health: '보건실',
+  library: '꿈마루도서관',
+  cafeteria: '학생식당',
+  
+  notice: '공지사항'
+};
+
+const getBreadcrumb = (post: PostData) => {
+  if (post.category === 'grade') {
+    const subName = subCategoryNameMap[post.subCategory || 'notice'] || post.subCategory || '공지사항';
+    return `학년 > ${post.grade}학년 > ${subName}`;
+  }
+  
+  const catName = categoryNameMap[post.category || ''] || post.category;
+  const subName = subCategoryNameMap[post.subCategory || ''] || post.subCategory;
+  
+  return `${catName} > ${subName}`;
+};
+
 const FavoritePage: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -120,7 +166,7 @@ const FavoritePage: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-3 text-xs text-gray-400">
                   <span className="font-medium text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
-                    {post.category === 'grade' ? `${post.grade}학년` : post.category} {'>'} {post.subCategory}
+                    {getBreadcrumb(post)}
                   </span>
                   <span className="font-medium text-gray-600">{post.authorName}</span>
                   <span>•</span>
