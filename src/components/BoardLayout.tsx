@@ -13,6 +13,7 @@ interface BoardLayoutProps {
   onWriteClick?: () => void;
   children: ReactNode;
   narrow?: boolean; // 글 작성/상세보기용 좁은 폭
+  topContent?: ReactNode; // 상단 탭 메뉴 등을 위한 공간
 }
 
 const BoardLayout: React.FC<BoardLayoutProps> = ({
@@ -25,7 +26,8 @@ const BoardLayout: React.FC<BoardLayoutProps> = ({
   showWriteButton = false,
   onWriteClick,
   children,
-  narrow = false
+  narrow = false,
+  topContent
 }) => {
   const navigate = useNavigate();
   const maxWidthClass = narrow ? 'max-w-4xl' : 'max-w-5xl';
@@ -33,6 +35,12 @@ const BoardLayout: React.FC<BoardLayoutProps> = ({
   return (
     <div className={`w-full ${maxWidthClass} mx-auto px-4 sm:px-6 py-8 md:py-12 flex flex-col flex-grow animate-in fade-in slide-in-from-bottom-4 duration-300`}>
       
+      {topContent && (
+        <div className="mb-6">
+          {topContent}
+        </div>
+      )}
+
       {/* Header Area */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div className="flex items-center">

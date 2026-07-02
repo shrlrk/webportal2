@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import PasswordSetupPage from './pages/PasswordSetupPage';
 import BoardPage from './pages/BoardPage';
+import SupportDepartmentPage from './pages/SupportDepartmentPage';
 import GradePage from './pages/GradePage';
 import FavoritePage from './pages/FavoritePage';
 import { useAuth } from './contexts/AuthContext';
@@ -27,6 +28,9 @@ const App: React.FC = () => {
         {/* 학년 관련 전용 라우트를 더 구체적이므로 먼저 선언하여 충돌 방지 */}
         <Route path="board/grade/:gradeId" element={<GradePage />} />
         <Route path="board/grade/:gradeId/:subCategory" element={<BoardPage />} />
+        
+        {/* 학생지원(Support) 전용 라우트 (Platform v2.0) */}
+        <Route path="board/support/:department" element={<SupportDepartmentPage />} />
         
         {/* 일반 카테고리/서브카테고리 게시판 */}
         <Route path="board/:category/:subCategory" element={<BoardPage />} />

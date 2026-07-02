@@ -10,8 +10,19 @@ import BoardLayout from '../components/BoardLayout';
 
 type ViewMode = 'list' | 'detail' | 'write' | 'edit';
 
-const BoardPage: React.FC = () => {
-  const { category, subCategory, gradeId } = useParams();
+interface BoardPageProps {
+  category?: string;
+  subCategory?: string;
+  gradeId?: string;
+  topContent?: React.ReactNode;
+}
+
+const BoardPage: React.FC<BoardPageProps> = (props) => {
+  const params = useParams();
+  const category = props.category || params.category;
+  const subCategory = props.subCategory || params.subCategory;
+  const gradeId = props.gradeId || params.gradeId;
+  const topContent = props.topContent;
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -300,6 +311,7 @@ const BoardPage: React.FC = () => {
         breadcrumb={breadcrumb}
         onGoBack={closeView}
         narrow={true}
+        topContent={topContent}
       >
         <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 flex-grow flex flex-col shadow-sm">
           
@@ -420,6 +432,7 @@ const BoardPage: React.FC = () => {
         breadcrumb={breadcrumb}
         onGoBack={closeView}
         narrow={true}
+        topContent={topContent}
       >
         <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
           <div className="p-6 sm:p-8 border-b border-gray-100">
@@ -487,6 +500,7 @@ const BoardPage: React.FC = () => {
       onSearchChange={setSearchKeyword}
       showWriteButton={writeAllowed}
       onWriteClick={openWrite}
+      topContent={topContent}
     >
       {loading ? (
         <div className="text-center py-20 text-gray-500">데이터를 불러오는 중입니다...</div>

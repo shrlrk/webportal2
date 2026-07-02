@@ -29,6 +29,17 @@ export interface PostData {
   publishStartDate?: string; // "YYYY-MM-DD"
   publishEndDate?: string;   // "YYYY-MM-DD"
   noEndDate?: boolean;
+  
+  // Application Board (신청형 게시판) 전용 필드
+  serviceType?: 'BOARD' | 'APPLICATION' | 'CALENDAR';
+  applicationStatus?: '접수' | '검토 중' | '처리 완료' | '답변 완료';
+  isPrivate?: boolean;
+  adminReply?: {
+    content: string;
+    authorName: string;
+    createdAt: any;
+  };
+
   authorId: string; // internalId
   authorUserId: string; // userId
   authorName: string;
@@ -43,3 +54,13 @@ export interface SystemConfig {
   readOnlyMode: boolean;
   currentSchoolYear: string;
 }
+
+export interface CalendarData {
+  id?: string;
+  department: string;
+  date: string; // "YYYY-MM-DD"
+  data: any; // 부서별 특화 데이터 (예: 식단표, 학사일정 등)
+  createdAt: any;
+  updatedAt: any;
+}
+
