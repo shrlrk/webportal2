@@ -292,7 +292,7 @@ const BoardPage: React.FC = () => {
   if (viewMode === 'write' || viewMode === 'edit') {
     return (
       <BoardLayout
-        title={viewMode === 'write' ? '새 글 작성' : '글 수정'}
+        title={mainTitle}
         breadcrumb={breadcrumb}
         onGoBack={closeView}
         narrow={true}
