@@ -83,10 +83,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return unsubscribe;
   }, []);
 
-  const logout = async () => {
-    if (auth) await signOut(auth);
-  };
-
   return (
     <AuthContext.Provider value={{ currentUser, loading, logout }}>
       {!loading && children}
