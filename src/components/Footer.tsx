@@ -34,14 +34,17 @@ const Footer: React.FC = () => {
     <>
       <footer className="bg-white border-t border-gray-100 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-          <div className="font-medium">
+          <div className="font-medium whitespace-nowrap">
             © 2026 대영고등학교 | Developed by 이순옥
           </div>
-          <div className="flex items-center gap-6">
-            <button className="hover:text-gray-800 transition-colors">문의하기</button>
-            <button onClick={() => openModal('이용약관', termsRaw)} className="hover:text-gray-800 transition-colors">이용약관</button>
-            <button onClick={() => openModal('개인정보처리방침', privacyRaw)} className="hover:text-gray-800 transition-colors font-medium">개인정보처리방침</button>
-            <button className="hover:text-gray-800 transition-colors">시스템관리</button>
+          <div 
+            className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3"
+            style={{ wordBreak: 'keep-all', overflowWrap: 'normal' }}
+          >
+            <button className="hover:text-gray-800 transition-colors whitespace-nowrap">문의하기</button>
+            <button onClick={() => openModal('이용약관', termsRaw)} className="hover:text-gray-800 transition-colors whitespace-nowrap">이용약관</button>
+            <button onClick={() => openModal('개인정보처리방침', privacyRaw)} className="hover:text-gray-800 transition-colors font-medium whitespace-nowrap">개인정보처리방침</button>
+            <button className="hover:text-gray-800 transition-colors whitespace-nowrap">시스템관리</button>
           </div>
         </div>
       </footer>

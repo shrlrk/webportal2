@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  BookOpen, Languages, Calculator, Globe, FlaskConical, Palette, 
-  Music, Dumbbell, Monitor, Wrench, ScrollText,
+  BookOpen, Languages, Calculator, Globe, Globe2, FlaskConical, Palette, 
+  Music, Dumbbell, Monitor, Wrench, ScrollText, BookOpenText,
   CircleDot, Compass, GraduationCap, MessageCircle, Folder,
   HeartHandshake, Stethoscope, Library, Utensils, Megaphone 
 } from 'lucide-react';
 import { getPosts } from '../services/firebase/boardService';
 import { PostData } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 const HomePage: React.FC = () => {
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
@@ -26,13 +27,13 @@ const HomePage: React.FC = () => {
       path: '/board',
       submenus: [
         { title: '국어', icon: BookOpen, path: '/board/subject/korean' },
-        { title: '영어', icon: Languages, path: '/board/subject/english' },
+        { title: '영어', icon: BookOpenText, path: '/board/subject/english' },
         { title: '수학', icon: Calculator, path: '/board/subject/math' },
         { title: '음악', icon: Music, path: '/board/subject/music' },
         { title: '체육', icon: Dumbbell, path: '/board/subject/pe' },
         { title: '사회', icon: Globe, path: '/board/subject/social' },
         { title: '과학', icon: FlaskConical, path: '/board/subject/science' },
-        { title: '외국어', icon: Languages, path: '/board/subject/foreign' },
+        { title: '외국어', icon: Globe2, path: '/board/subject/foreign' },
         { title: '정보', icon: Monitor, path: '/board/subject/it' },
         { title: '기술가정', icon: Wrench, path: '/board/subject/tech' },
         { title: '한문', icon: ScrollText, path: '/board/subject/hanja' },
@@ -88,7 +89,14 @@ const HomePage: React.FC = () => {
     setActiveMenuId(activeMenuId === id ? null : id);
   };
 
+  const { currentUser } = useAuth(); // 상단에 import 필요
+
   const handleNoticeClick = (notice: PostData) => {
+    if (!currentUser) {
+      alert("로그인 후 게시글을 확인할 수 있습니다.");
+      return;
+    }
+    
     if (notice.category === 'grade' && notice.grade) {
       navigate(`/board/grade/${notice.grade}/${notice.subCategory || 'notice'}`, { state: { openPostId: notice.id } });
     } else if (notice.category && notice.subCategory) {
@@ -121,18 +129,17 @@ const HomePage: React.FC = () => {
 
       {/* Main Notice Section */}
       {mainNotices.length > 0 && (
-        <div className="w-full max-w-4xl mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-75">
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-4 ml-1">
+        <div className="w-full max-w-4xl mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-75">
+          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-2 ml-1">
               <Megaphone className="w-5 h-5 text-red-500" />
-              <h3 className="text-lg font-bold text-gray-800">주요 공지사항</h3>
             </div>
-            <div className="flex flex-col gap-2">
-              {mainNotices.map((notice) => (
+            <div className="flex flex-col gap-1">
+              {mainNotices.slice(0, 3).map((notice) => (
                 <div 
                   key={notice.id} 
                   onClick={() => handleNoticeClick(notice)}
-                  className="flex justify-between items-center py-2 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                  className="flex justify-between items-center py-1.5 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
                 >
                   <span className="text-gray-700 font-medium line-clamp-1">
                     {notice.title}

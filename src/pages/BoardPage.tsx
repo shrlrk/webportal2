@@ -170,6 +170,10 @@ const BoardPage: React.FC = () => {
   };
 
   const openDetail = (post: PostData) => {
+    if (!currentUser) {
+      alert("로그인 후 게시글을 확인할 수 있습니다.");
+      return;
+    }
     setSelectedPost(post);
     setViewMode('detail');
   };

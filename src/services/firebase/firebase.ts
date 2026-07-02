@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -27,4 +27,7 @@ export const app = (() => {
 })();
 
 export const auth = app ? getAuth(app) : null;
+if (auth) {
+  setPersistence(auth, browserSessionPersistence).catch(console.error);
+}
 export const db = app ? getFirestore(app) : null;
