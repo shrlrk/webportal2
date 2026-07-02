@@ -147,18 +147,19 @@ const HomePage: React.FC = () => {
       {/* Main Notice Section */}
       {mainNotices.length > 0 && (
         <div className="w-full max-w-4xl mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-75">
-          <div className="bg-white rounded-2xl border border-gray-200 py-3 px-4 shadow-sm">
-            <div className="flex items-center gap-2 mb-2.5 ml-1">
+          <div className="bg-white rounded-2xl border border-gray-200 px-4 shadow-sm" style={{ paddingTop: '8px', paddingBottom: '8px' }}>
+            <div className="flex items-center gap-2 ml-1" style={{ marginBottom: '8px' }}>
               <Megaphone className="w-5 h-5 text-red-500" />
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col" style={{ gap: '6px' }}>
               {mainNotices.map((notice) => (
                 <div 
                   key={notice.id} 
                   onClick={() => handleNoticeClick(notice)}
-                  className="flex justify-between items-center py-1 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                  className="flex justify-between items-center px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                  style={{ paddingTop: '2px', paddingBottom: '2px' }}
                 >
-                  <span className="text-gray-700 font-medium line-clamp-1 leading-[1.4]">
+                  <span className="text-gray-700 font-medium line-clamp-1" style={{ lineHeight: 1.4 }}>
                     {notice.title}
                   </span>
                   <span className="text-sm text-gray-400 whitespace-nowrap ml-4">
