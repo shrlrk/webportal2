@@ -53,9 +53,12 @@ const BoardPage: React.FC<BoardPageProps> = (props) => {
   const subTitleMap: Record<string, string> = {
     korean: '국어', english: '영어', math: '수학', music: '음악', pe: '체육',
     social: '사회', science: '과학', foreign: '외국어', it: '정보', tech: '기술가정', hanja: '한문',
-    info: '진로정보', university: '대학정보', department: '학과정보', counseling: '상담신청', resources: '자료실',
+    info: '진로정보', university: '대학정보', department: '학과정보', counseling: '상담 신청', resources: '자료실',
     wee: 'Wee클래스', health: '보건실', library: '꿈마루도서관', cafeteria: '학생식당',
-    notice: '공지사항', calendar: '학사일정', enrollment: '수강신청'
+    notice: '공지사항', calendar: '학사일정', enrollment: '수강신청',
+    test: '심리검사', materials: '마음건강 자료', infection: '감염병 안내', vaccine: '예방접종 안내',
+    newbooks: '신착도서', search: '도서검색', request: '희망도서 신청', program: '프로그램 신청',
+    suggestion: '의견함', diet: '월간 식단', nutrition: '영양정보', allergy: '알레르기 정보'
   };
 
   const getCategoryName = (cat?: string) => {
